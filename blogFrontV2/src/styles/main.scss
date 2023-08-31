@@ -1,0 +1,109 @@
+// Import normalize-scss
+@import 'normalize-scss/sass/normalize';
+
+// Variables
+$primary-color: #2b2b2b;
+$secondary-color: #ececec;
+$font-family: sans-serif, serif;
+
+// Reset (optionnel)
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-family;
+  color: $primary-color;
+  background-color: $secondary-color;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  > div {
+    flex: 1;
+  }
+}
+
+// Header & Footer
+header,
+footer {
+  background-color: $primary-color;
+  color: $secondary-color;
+  text-align: center;
+  padding: 1em 0;
+}
+
+// Navbar
+nav ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: lighten($primary-color, 6%);
+  padding: 0.5em 0;
+  list-style: none; // Enlevez les puces
+
+  li {
+    margin: 0 15px;
+
+    a {
+      text-decoration: none;
+      color: $secondary-color;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  nav ul {
+    li {
+      margin-bottom: 0.5em;
+    }
+  }
+}
+
+// Home Page
+section {
+  padding: 1em;
+  text-align: center;
+
+  h1 {
+    color: $primary-color;
+    margin-bottom: 20px;
+  }
+}
+
+// Variables
+$article-width: calc(
+  33.33% - 16px
+); // Ajustez cette valeur pour la taille des cartes
+
+// Grid d'articles
+.article-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px; // Espacement entre les cartes
+  justify-content: center;
+  margin-left: 170px; // Grande marge à gauche pour les grands écrans
+  margin-right: 170px; // Grande marge à droite pour les grands écrans
+}
+
+.article-card {
+  flex-basis: $article-width; // Utilisation de la variable
+  padding-top: $article-width; // Utilisation de la variable
+  position: relative;
+  background-color: #1d1d1d; // Couleur de fond
+  border-radius: 8px;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .article-grid {
+    margin-left: 10px; // Petite marge à gauche pour les mobiles
+    margin-right: 10px; // Petite marge à droite pour les mobiles
+  }
+}
