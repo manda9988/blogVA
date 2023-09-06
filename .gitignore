@@ -1,5 +1,2 @@
-# .gitignore
 node_modules/
 *.log
-package-lock.json
-public/build/
