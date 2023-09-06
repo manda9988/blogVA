@@ -1,9 +1,19 @@
-<!-- Home.svelte -->
 <script>
+  import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
+  
+
+  let articles = [];
+
+  onMount(async () => {
+
+    const res = await fetch('http://localhost:3002/articles');
+    articles = await res.json();
+      console.log(articles);  // Ajoutez cette ligne
+
+  });
 
   function navigateToArticle(id, event) {
-    // Gère le clic de la souris ou la touche "Entrée" du clavier
     if (
       event.type === 'click' ||
       (event.type === 'keydown' && event.key === 'Enter')
@@ -14,28 +24,17 @@
 </script>
 
 <section>
-  <!-- <h2>Blog généraliste</h2> -->
   <div class="article-grid">
-    <!-- Faire de la div .article-card cliquable pour naviguer vers la page Article avec un ID donné (par exemple, 1) -->
-    <div
-      class="article-card"
-      role="button"
-      tabindex="0"
-      on:click={(event) => navigateToArticle(1, event)}
-      on:keydown={(event) => navigateToArticle(1, event)}
-    >
-      <!-- Contenu de l'article 1 -->
-    </div>
-    <div
-      class="article-card"
-      role="button"
-      tabindex="0"
-      on:click={(event) => navigateToArticle(2, event)}
-      on:keydown={(event) => navigateToArticle(2, event)}
-    >
-      <!-- Contenu de l'article 2 -->
-    </div>
-    <!-- ... autres cartes d'articles ... -->
-    <!-- Vous pouvez remplir ces divs comme bon vous semble, éventuellement avec des données dynamiques -->
+    {#each articles as article}
+      <div
+        class="article-card"
+        role="button"
+        tabindex="0"
+        on:click={(event) => navigateToArticle(article.id, event)}
+        on:keydown={(event) => navigateToArticle(article.id, event)}
+      >
+        {article.title}
+      </div>
+    {/each}
   </div>
 </section>

@@ -1,13 +1,8 @@
-CREATE TABLE categories (
-  id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL
-);
-
+-- Création de la table articles
 CREATE TABLE articles (
   id SERIAL PRIMARY KEY,
-  title TEXT NOT NULL,
+  title VARCHAR(255) NOT NULL,
   content TEXT NOT NULL,
-  image_url TEXT,
-  category_id INTEGER REFERENCES categories(id),
-  date_created TIMESTAMP DEFAULT current_timestamp
+  category TEXT NOT NULL
 );
+

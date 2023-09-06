@@ -5,13 +5,27 @@
   let file;
 
   function handlePublish() {
-    // Logique de publication
+    fetch('http://localhost:3002/articles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title, content, category }),
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log('Article publié:', data);
+      // Naviguer vers le nouvel article, ou faire ce que vous voulez
+    });
   }
 
   function handleFileChange(event) {
     file = event.target.files[0];
   }
 </script>
+
+<!-- le reste du code HTML reste le même -->
+
 
 <div class="publish-container">
   <h2>Publier un nouvel article</h2>
