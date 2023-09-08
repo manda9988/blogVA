@@ -1,27 +1,31 @@
 const express = require("express");
-const cors = require("cors"); // Assurez-vous d'avoir installé ce package via npm
+const cors = require("cors");
 const pool = require("./database");
+const path = require("path"); // Nouveau
 const app = express();
 
-// Utilisation de CORS ici
+// Configuration CORS
 app.use(
   cors({
-    origin: "http://localhost:5173", // Remplacez par l'origine de votre frontend
+    origin: "http://localhost:5173",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   })
 );
 
+// Servir les fichiers statiques du dossier "img"
+app.use("/img", express.static(path.join(__dirname, "img"))); // Nouveau
+
+// Parse le body en JSON
 app.use(express.json());
 
-// ... (reste du code)
-
+// Création d'un nouvel article
 app.post("/articles", async (req, res) => {
   try {
-    const { title, content, category } = req.body;
+    const { title, content, category, imageUrl } = req.body;
     const result = await pool.query(
-      "INSERT INTO articles (title, content, category) VALUES ($1, $2, $3) RETURNING *",
-      [title, content, category]
+      "INSERT INTO articles (title, content, category, imageUrl) VALUES ($1, $2, $3, $4) RETURNING *",
+      [title, content, category, imageUrl]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -63,10 +67,10 @@ app.get("/articles/:id", async (req, res) => {
 app.put("/articles/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content, category } = req.body;
+    const { title, content, category, imageUrl } = req.body;
     const result = await pool.query(
-      "UPDATE articles SET title = $1, content = $2, category = $3 WHERE id = $4 RETURNING *",
-      [title, content, category, id]
+      "UPDATE articles SET title = $1, content = $2, category = $3, imageUrl = $4 WHERE id = $5 RETURNING *",
+      [title, content, category, imageUrl, id]
     );
     if (result.rows.length > 0) {
       res.json(result.rows[0]);
@@ -94,8 +98,6 @@ app.delete("/articles/:id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
-// Et ainsi de suite pour les catégories...
 
 const port = process.env.PORT || 3002;
 app.listen(port, () => {

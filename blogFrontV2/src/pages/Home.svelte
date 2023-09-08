@@ -26,15 +26,19 @@
 <section>
   <div class="article-grid">
     {#each articles as article}
-      <div
-        class="article-card"
-        role="button"
-        tabindex="0"
-        on:click={(event) => navigateToArticle(article.id, event)}
-        on:keydown={(event) => navigateToArticle(article.id, event)}
-      >
-        {article.title}
-      </div>
-    {/each}
+  <div
+    class="article-card"
+    role="button"
+    tabindex="0"
+    on:click={(event) => navigateToArticle(article.id, event)}
+    on:keydown={(event) => navigateToArticle(article.id, event)}
+  >
+    <img src={article.imageUrl} alt={article.title} />
+    {article.title}
+  </div>
+{/each}
+
+
+
   </div>
 </section>
