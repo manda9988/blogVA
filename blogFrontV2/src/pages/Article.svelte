@@ -1,3 +1,4 @@
+<!-- Article.svelte -->
 <script lang="ts">
   import { params } from 'svelte-spa-router';
 

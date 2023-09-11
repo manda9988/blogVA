@@ -1,3 +1,4 @@
+// app.js
 const express = require("express");
 const cors = require("cors");
 const pool = require("./database");
@@ -38,6 +39,8 @@ app.post("/articles", async (req, res) => {
 app.get("/articles", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM articles");
+    // console.log(result.rows[0]);
+
     res.json(result.rows);
   } catch (err) {
     console.error(err);

@@ -1,0 +1,66 @@
+// -------------------
+// Article Page
+// -------------------
+.article-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  // background: red;
+
+  h2 {
+    font-size: 2em;
+    // margin-bottom: 1em;
+  }
+
+  p {
+    font-size: 1em;
+    color: $primary-color;
+    margin-bottom: 1em;
+  }
+
+  .article-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .article-image-container {
+      // border: 1px solid $primary-color;
+      // padding: 10px;
+      margin-bottom: 1em;
+      width: 100%;
+      max-width: 700px;
+      height: 300px;
+      display: block; // ou inline-block selon vos besoins
+
+      &.default-bg {
+        background-color: rgb(31, 31, 31); // Ajout d'un fond noir
+        background-size: cover;
+        background-position: center;
+        color: white; // Couleur du texte (si nécessaire)
+      }
+    }
+
+    .article-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain; // Pour s'assurer que l'image est contenue dans son conteneur
+      margin: auto; // Pour centrer l'image
+      display: block; // Pour que la propriété margin:auto fonctionne correctement
+    }
+
+    .article-content {
+      font-size: 1em;
+      line-height: 1.6;
+      color: $primary-color;
+      border: 1px solid $primary-color;
+      padding: 20px;
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+  }
+}

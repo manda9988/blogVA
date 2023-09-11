@@ -1,0 +1,68 @@
+// -------------------
+// Page Account
+// -------------------
+
+.account-container {
+  h2 {
+    margin-bottom: 1em;
+    text-align: center;
+  }
+
+  .article-table {
+    width: 60%;
+    border-collapse: collapse;
+    margin: 0 auto;
+
+    th,
+    td {
+      border: 1px solid darken($primary-color, 5%);
+      text-align: center; // Centrer le texte
+      padding: 0.4em 0.6em; // Utiliser du padding pour gagner de l'espace
+    }
+
+    th {
+      background-color: lighten($primary-color, 10%);
+      color: #e6e6e6;
+    }
+
+    td {
+      button {
+        display: block; // Faire que le bouton occupe toute la largeur
+        margin-bottom: 0.5em; // Ajouter une marge en bas pour l'espacement
+        padding: 4px;
+        cursor: pointer; // Change le curseur en pointeur
+        border: 1px solid black;
+        width: 90px;
+        border-radius: 6px;
+
+        // Effet Hover pour Modifier
+        &.edit-button:hover {
+          background-color: green;
+          color: white;
+        }
+
+        // Effet Hover pour Supprimer
+        &.delete-button:hover {
+          background-color: red;
+          // color: white;
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        flex-direction: column; // Met les boutons en colonne
+        align-items: center; // Centrer les boutons horizontalement
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// -------------------
+// Responsive Account Page
+// -------------------
+@media (max-width: 800px) {
+  .account-container .article-table {
+    width: 90%;
+  }
+}
