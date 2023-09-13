@@ -1,6 +1,7 @@
 <!-- Article.svelte -->
 <script lang="ts">
   import { params } from 'svelte-spa-router';
+  import { onMount } from 'svelte';
 
   interface Article {
     id: number;
@@ -14,18 +15,24 @@
   let article: Article;
   let isLoading = true;
 
-  params.subscribe(($params) => {
-    console.log("Params received:", $params);
+  onMount(() => {
+        console.log("Component mounted");  // Debug log
 
-    if ($params && $params.id) {
-      id = $params.id;
-      loadData().then(() => {
+    const unsubscribe = params.subscribe(($params) => {
+      console.log("Params received:", $params);
+
+      if ($params && $params.id) {
+        id = $params.id;
+        loadData().then(() => {
+          isLoading = false;
+        });
+      } else {
+        console.error("ID not provided");
         isLoading = false;
-      });
-    } else {
-      console.error("ID not provided");
-      isLoading = false;
-    }
+      }
+    });
+
+    return unsubscribe; // Se désabonner lorsque le composant est démonté
   });
 
   async function loadData() {
@@ -46,7 +53,7 @@
 {:else}
   <div class="article-container">
     <h2>{article?.title}</h2>
-    <p>Catégorie : {article?.category}</p>
+    <p>{article?.category}</p>
     <div class="article-details">
       {#if article?.imageurl} <!-- Attention au nom correct du champ -->
         <div class="article-image-container">

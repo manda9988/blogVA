@@ -2,6 +2,9 @@
 // Article Page
 // -------------------
 .article-container {
+  // *{
+  //   border: 1px solid red;
+  // }
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
@@ -11,14 +14,19 @@
   // background: red;
 
   h2 {
-    font-size: 2em;
+    font-size: 2.4em;
     // margin-bottom: 1em;
   }
 
   p {
-    font-size: 1em;
-    color: $primary-color;
+    font-size: 0.8em;
+    color: $secondary-color;
     margin-bottom: 1em;
+    background: $primary-color;
+    display: inline-block;
+    padding: 8px;
+    margin: 6px auto 20px;
+    border-radius: 8px;
   }
 
   .article-details {
@@ -27,11 +35,7 @@
     align-items: center;
 
     .article-image-container {
-      // border: 1px solid $primary-color;
-      // padding: 10px;
       margin-bottom: 1em;
-      width: 100%;
-      max-width: 700px;
       height: 300px;
       display: block; // ou inline-block selon vos besoins
 
@@ -49,18 +53,20 @@
       object-fit: contain; // Pour s'assurer que l'image est contenue dans son conteneur
       margin: auto; // Pour centrer l'image
       display: block; // Pour que la propriété margin:auto fonctionne correctement
+      border-radius: 9px;
     }
 
     .article-content {
       font-size: 1em;
       line-height: 1.6;
       color: $primary-color;
-      border: 1px solid $primary-color;
+      // border: 2px solid $primary-color;
       padding: 20px;
       width: 100%;
       max-width: 900px;
       text-align: center;
       margin-bottom: 30px;
+      border-radius: 9px;
     }
   }
 }

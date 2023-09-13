@@ -4,6 +4,7 @@ import Publish from './pages/Publish.svelte';
 import Login from './pages/Login.svelte';
 import Account from './pages/Account.svelte';
 import Article from './pages/Article.svelte';
+import Error404 from './pages/Error404.svelte'; // Nouvelle page d'erreur 404
 
 const routes = {
   '/': Home,
@@ -11,11 +12,10 @@ const routes = {
   '/login': Login,
   '/account': Account,
   '/article/:id': Article, // ":id" est un paramètre de route pour représenter l'ID de l'article
+  '*': Error404, // Wildcard route pour capturer toutes les routes non définies
 };
 
-// Afficher toutes les routes définies pour le diagnostic
 console.log('Defined routes:', routes);
+console.log('Debug: Routes loaded');
 
 export default routes;
-console.log("Debug: Routes loaded");
-console.log("Debug: Routes loaded");

@@ -1,6 +1,6 @@
 <footer>
   <div class="footer-container">
-    <p>© 2023 Vincent Achy</p>
+    <p>© 2023 Vincent.A</p>
     <div class="icons">
       <a href="mailto:your.email@example.com">
         <i class="fas fa-envelope"></i>

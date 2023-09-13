@@ -44,12 +44,16 @@ app.get("/articles", async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error(err);
+    console.error("Error in GET /articles/:id:", err); // Debug log
+
     res.status(500).send("Internal Server Error");
   }
 });
 
 // Récupérer un article par son ID
 app.get("/articles/:id", async (req, res) => {
+  console.log("Received ID:", req.params.id);
+
   try {
     const { id } = req.params;
     const result = await pool.query("SELECT * FROM articles WHERE id = $1", [
