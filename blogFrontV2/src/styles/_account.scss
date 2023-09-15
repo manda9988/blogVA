@@ -26,14 +26,22 @@
     }
 
     td {
+      &:nth-child(1),
+      &:nth-child(2),
+      &:nth-child(3) {
+        font-weight: 600;
+      }
       button {
         display: block; // Faire que le bouton occupe toute la largeur
-        margin-bottom: 0.5em; // Ajouter une marge en bas pour l'espacement
+        margin: 0.4em;
         padding: 4px;
         cursor: pointer; // Change le curseur en pointeur
-        border: 1px solid black;
+        border: none;
         width: 90px;
         border-radius: 6px;
+        font-size: 0.8em;
+        background: rgb(127, 127, 127);
+        color: rgb(228, 228, 228);
 
         // Effet Hover pour Modifier
         &.edit-button:hover {
@@ -44,7 +52,7 @@
         // Effet Hover pour Supprimer
         &.delete-button:hover {
           background-color: red;
-          // color: white;
+          color: rgb(29, 29, 29);
         }
       }
 

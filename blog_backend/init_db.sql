@@ -5,6 +5,6 @@ CREATE TABLE articles (
   title VARCHAR(255) NOT NULL,
   content TEXT NOT NULL,
   category TEXT NOT NULL,
-  imageUrl TEXT
+  imageurl TEXT
 );
 

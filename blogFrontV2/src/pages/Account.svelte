@@ -1,18 +1,35 @@
+<!-- Account.svelte -->
 <script>
-  let articles = [
-    { id: 1, title: 'Article 1', category: 'Technologie' },
-    { id: 2, title: 'Article 2', category: 'Science' },
-    // Ajoutez plus d'articles ici
-  ];
+  import { onMount } from 'svelte';
+
+  let articles = [];
+
+  onMount(async () => {
+    const res = await fetch('http://localhost:3002/articles');
+    articles = await res.json();
+  });
 
   function editArticle(id) {
-    // Code pour modifier l'article
     alert(`Modifier l'article avec l'ID: ${id}`);
   }
 
-  function deleteArticle(id) {
-    // Code pour supprimer l'article
-    alert(`Supprimer l'article avec l'ID: ${id}`);
+  async function deleteArticle(id, title) {
+    const confirmDelete = window.confirm(
+      `Êtes-vous sûr de vouloir supprimer l'article ${title}?`,
+    );
+    if (confirmDelete) {
+      // Supprimer l'article en utilisant une requête HTTP DELETE
+      const res = await fetch(`http://localhost:3002/articles/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        // Supprimez l'article de la liste locale si la suppression est réussie
+        articles = articles.filter((article) => article.id !== id);
+      } else {
+        alert("Échec de la suppression de l'article.");
+      }
+    }
   }
 </script>
 
@@ -42,7 +59,8 @@
               >
               <button
                 class="delete-button"
-                on:click={() => deleteArticle(article.id)}>Supprimer</button
+                on:click={() => deleteArticle(article.id, article.title)}
+                >Supprimer</button
               >
             </div>
           </td>

@@ -16,10 +16,10 @@
   let isLoading = true;
 
   onMount(() => {
-        console.log("Component mounted");  // Debug log
+    console.log('Component mounted'); // Debug log
 
     const unsubscribe = params.subscribe(($params) => {
-      console.log("Params received:", $params);
+      console.log('Params received:', $params);
 
       if ($params && $params.id) {
         id = $params.id;
@@ -27,7 +27,7 @@
           isLoading = false;
         });
       } else {
-        console.error("ID not provided");
+        console.error('ID not provided');
         isLoading = false;
       }
     });
@@ -55,9 +55,15 @@
     <h2>{article?.title}</h2>
     <p>{article?.category}</p>
     <div class="article-details">
-      {#if article?.imageurl} <!-- Attention au nom correct du champ -->
+      {#if article?.imageurl}
+        <!-- Attention au nom correct du champ -->
         <div class="article-image-container">
-          <img src={`http://localhost:3002${article?.imageurl}`} alt={article?.title} class="article-image" /> <!-- Attention au nom correct du champ -->
+          <img
+            src={`http://localhost:3002${article?.imageurl}`}
+            alt={article?.title}
+            class="article-image"
+          />
+          <!-- Attention au nom correct du champ -->
         </div>
       {:else}
         <div class="article-image-container default-bg"></div>
