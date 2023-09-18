@@ -60,13 +60,15 @@
       font-size: 1em;
       line-height: 1.6;
       color: $primary-color;
-      // border: 2px solid $primary-color;
       padding: 20px;
       width: 100%;
       max-width: 900px;
       text-align: center;
       margin-bottom: 30px;
       border-radius: 9px;
+      background: rgba(255, 192, 203, 0.889);
+      word-wrap: break-word; // Ajouté pour éviter le débordement du texte
+      // Pas de hauteur fixe pour permettre au conteneur de s'adapter au contenu
     }
   }
 }
