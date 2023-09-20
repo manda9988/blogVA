@@ -75,11 +75,22 @@
 // -------------------
 // Responsive Login Page
 // -------------------
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .login-container {
     padding: 1em;
     h2 {
       font-size: 1.4em;
+    }
+    label {
+      font-size: 0.8em;
+    }
+    button[type='submit'] {
+      font-size: 0.8em;
+    }
+    .input-group {
+      input {
+        padding: 0.3em;
+      }
     }
   }
 }

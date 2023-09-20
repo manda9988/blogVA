@@ -18,40 +18,6 @@ header {
 }
 
 // -------------------
-// Footer
-// -------------------
-footer {
-  padding: 1.4em 0;
-  text-align: center;
-  background-color: $primary-color;
-  color: $secondary-color;
-  margin-top: 20px;
-
-  .footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: auto;
-    padding: 0 20px;
-    p {
-      margin: 0;
-    }
-    .icons {
-      a {
-        margin-left: 15px;
-        color: $secondary-color;
-        display: inline-block;
-        &:hover {
-          color: lighten($secondary-color, 90%);
-          transform: scale(1.2);
-        }
-      }
-    }
-  }
-}
-
-// -------------------
 // Navbar
 // -------------------
 nav ul {
@@ -83,13 +49,56 @@ nav ul {
 }
 
 // -------------------
-// Responsive
+// Footer
 // -------------------
-@media (max-width: 795px) {
+footer {
+  padding: 1.4em 0;
+  text-align: center;
+  background-color: $primary-color;
+  color: $secondary-color;
+  margin-top: 20px;
+  font-size: 1em;
+
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+    p {
+      margin: 0;
+    }
+    .icons {
+      a {
+        margin-left: 15px;
+        color: $secondary-color;
+        display: inline-block;
+        &:hover {
+          color: lighten($secondary-color, 90%);
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+}
+
+// -------------------
+// Responsive Header-Footer
+// -------------------
+@media (max-width: 600px) {
   header {
     height: 60px;
     h1 {
       font-size: 2.2em;
     }
+  }
+
+  nav ul {
+    font-size: 0.8em;
+  }
+
+  footer {
+    font-size: 0.8em;
   }
 }

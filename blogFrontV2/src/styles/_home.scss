@@ -80,10 +80,11 @@ section {
     padding: 5px;
     width: 65%;
     border-radius: 5px;
-    // background: rgba(38, 38, 38, 0.829);
+    // background: pink;
     opacity: 0;
     transition: opacity 0.3s ease;
     font-size: 1.4em;
+    word-wrap: break-word;
   }
 
   &:hover {

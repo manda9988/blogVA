@@ -10,19 +10,34 @@
 
   .article-table {
     width: 60%;
+    margin: 0 auto 2em auto;
     border-collapse: collapse;
-    margin: 0 auto;
 
     th,
     td {
       border: 1px solid darken($primary-color, 5%);
-      text-align: center; // Centrer le texte
-      padding: 0.4em 0.6em; // Utiliser du padding pour gagner de l'espace
+      text-align: center;
+      padding: 0.4em 0.6em;
     }
 
     th {
       background-color: lighten($primary-color, 10%);
       color: #e6e6e6;
+    }
+
+    .col-id {
+      width: 8%;
+    }
+
+    .col-title,
+    .col-category {
+      padding: 0.4em 1em;
+      word-wrap: break-word;
+      width: 28%;
+    }
+
+    .col-actions {
+      width: 28%;
     }
 
     td {
@@ -31,11 +46,12 @@
       &:nth-child(3) {
         font-weight: 600;
       }
+
       button {
-        display: block; // Faire que le bouton occupe toute la largeur
+        display: block;
         margin: 0.4em;
-        padding: 4px;
-        cursor: pointer; // Change le curseur en pointeur
+        padding: 10px;
+        cursor: pointer;
         border: none;
         width: 90px;
         border-radius: 6px;
@@ -43,13 +59,11 @@
         background: rgb(127, 127, 127);
         color: rgb(228, 228, 228);
 
-        // Effet Hover pour Modifier
         &.edit-button:hover {
           background-color: green;
           color: white;
         }
 
-        // Effet Hover pour Supprimer
         &.delete-button:hover {
           background-color: red;
           color: rgb(29, 29, 29);
@@ -58,19 +72,45 @@
 
       .action-buttons {
         display: flex;
-        flex-direction: column; // Met les boutons en colonne
-        align-items: center; // Centrer les boutons horizontalement
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
       }
     }
   }
-}
 
-// -------------------
-// Responsive Account Page
-// -------------------
-@media (max-width: 800px) {
-  .account-container .article-table {
-    width: 90%;
+  // -------------------
+  // Responsive Account Page
+  // -------------------
+  @media (max-width: 700px) {
+    h2 {
+      font-size: 1.2em;
+    }
+
+    .article-table {
+      width: 90%;
+      table-layout: fixed;
+
+      th,
+      td {
+        font-size: 0.75em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .col-id {
+        width: 10%;
+      }
+
+      .col-title,
+      .col-category {
+        width: 30%;
+      }
+
+      .col-actions {
+        width: 30%;
+      }
+    }
   }
 }

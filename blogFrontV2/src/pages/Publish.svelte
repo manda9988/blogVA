@@ -46,7 +46,7 @@
         type="text"
         bind:value={title}
         required
-        maxlength="18"
+        maxlength="14"
       />
     </div>
 
@@ -57,7 +57,7 @@
         type="text"
         bind:value={category}
         required
-        maxlength="18"
+        maxlength="14"
       />
     </div>
 
