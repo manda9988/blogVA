@@ -1,6 +1,7 @@
 <!-- Account.svelte -->
 <script>
   import { onMount } from 'svelte';
+  import { push } from 'svelte-spa-router'; // Importer push de svelte-spa-router
 
   let articles = [];
 
@@ -10,7 +11,12 @@
   });
 
   function editArticle(id) {
-    alert(`Modifier l'article avec l'ID: ${id}`);
+    const confirmEdit = window.confirm(
+      'Êtes-vous sûr de vouloir modifier cet article?',
+    );
+    if (confirmEdit) {
+      push(`/edit/${id}`); // Utiliser push pour naviguer vers la nouvelle route
+    }
   }
 
   async function deleteArticle(id, title) {

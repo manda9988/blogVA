@@ -34,7 +34,7 @@
   }
 </script>
 
-<!-- HTML Code -->
+<!-- HTML Code Publish.svelte -->
 <div class="publish-container">
   <h2>Publier un nouvel article</h2>
 
