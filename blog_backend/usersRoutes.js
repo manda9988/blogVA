@@ -1,11 +1,10 @@
-// usersRoutes.js
 const express = require('express');
-const bcrypt = require('bcrypt'); // Pour hasher les mots de passe
-const { check, validationResult } = require('express-validator'); // Pour valider les données
+const bcrypt = require('bcrypt');
+const { check, validationResult } = require('express-validator');
+const pool = require('./database'); // Assurez-vous que ce chemin est correct
 
 const router = express.Router();
 
-// Middleware pour valider les données d'inscription
 const registerValidators = [
   check('username').notEmpty().withMessage("Le nom d'utilisateur est requis"),
   check('email').isEmail().withMessage("L'adresse e-mail n'est pas valide"),
@@ -22,19 +21,41 @@ router.post('/register', registerValidators, async (req, res) => {
 
   try {
     const { username, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10); // Hasher le mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Enregistrer l'utilisateur dans la base de données
-    // ...
+    // Définir le rôle en fonction de l'adresse e-mail
+    const role = email === 'votre_email@example.com' ? 'admin' : 'user';
 
-    res.status(201).json({ message: 'Utilisateur créé avec succès' });
+    // Enregistrer l'utilisateur dans la base de données avec le rôle approprié
+    const result = await pool.query(
+      'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *',
+      [username, email, hashedPassword, role],
+    );
+
+    res
+      .status(201)
+      .json({ message: 'Utilisateur créé avec succès', user: result.rows[0] });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });
 
 router.post('/login', (req, res) => {
   // Implémenter la logique de connexion ici
+  // ...
+});
+
+router.get('/', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, username, email, role FROM users',
+    ); // Sélectionnez seulement les colonnes qui sont sûres à exposer
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 module.exports = router;

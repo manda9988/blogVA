@@ -1,17 +1,46 @@
 <!-- Register.svelte -->
 <script>
+  import { onMount } from 'svelte';
+
   let email = '';
   let username = '';
   let password = '';
   let confirmPassword = '';
 
-  function handleRegister() {
-    // Gérer la logique d'inscription ici
+  const API_URL = 'http://localhost:3002'; // Assurez-vous que c'est le bon port
+
+  onMount(() => {
+    // Initialisations si nécessaire
+  });
+
+  async function handleRegister() {
     if (password !== confirmPassword) {
       alert('Les mots de passe ne correspondent pas');
       return;
     }
-    // Envoie les données d'inscription au serveur
+
+    try {
+      const response = await fetch(`${API_URL}/users/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json(); // Parse l'erreur en JSON
+        // Affiche un message d'erreur basé sur la réponse du serveur
+        alert(error.errors.map((err) => err.msg).join('\n'));
+        return;
+      }
+
+      alert('Inscription réussie!');
+      // Redirection si nécessaire
+    } catch (error) {
+      console.error("Erreur lors de l'inscription:", error);
+      alert("Erreur lors de l'inscription. Veuillez réessayer.");
+    }
   }
 </script>
 
@@ -28,7 +57,13 @@
     </div>
     <div class="input-group">
       <label for="password">Mot de passe</label>
-      <input id="password" type="password" bind:value={password} required />
+      <input
+        id="password"
+        type="password"
+        bind:value={password}
+        required
+        autocomplete="new-password"
+      />
     </div>
     <div class="input-group">
       <label for="confirmPassword">Confirmer le mot de passe</label>
@@ -37,6 +72,7 @@
         type="password"
         bind:value={confirmPassword}
         required
+        autocomplete="new-password"
       />
     </div>
     <button type="submit">S'inscrire</button>
