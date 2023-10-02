@@ -1,5 +1,6 @@
-// login.scss
-.login-container {
+// register.scss
+
+.register-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -38,44 +39,24 @@
     }
   }
 
-  .button-group {
-    display: flex;
-    // justify-content: space-between;
-    margin-top: 24px;
-    margin-bottom: 24px;
-
-    button {
-      padding: 0.5em 1em;
-      font-size: 1em;
-      background-color: $primary-color;
-      color: $secondary-color;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-right: 8px;
-
-      &:hover {
-        background-color: darken($primary-color, 5%);
-      }
-    }
-  }
-
-  a {
-    display: block;
-    margin-top: 1em;
-    color: $primary-color;
-    text-decoration: none;
+  button[type='submit'] {
+    padding: 0.5em 1em;
+    font-size: 1em;
+    background-color: $primary-color;
+    color: $secondary-color;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
-    // text-align: center;
+    margin-top: 24px;
 
     &:hover {
-      text-decoration: underline;
+      background-color: darken($primary-color, 5%);
     }
   }
 }
 
 @media (max-width: 1100px) {
-  .login-container {
+  .register-container {
     width: 45%;
     padding: 1em;
     h2 {
@@ -84,7 +65,7 @@
     label {
       font-size: 0.8em;
     }
-    .button-group button {
+    button[type='submit'] {
       font-size: 0.8em;
     }
     .input-group {
@@ -96,7 +77,7 @@
 }
 
 @media (max-width: 700px) {
-  .login-container {
+  .register-container {
     width: 80%;
   }
 }
