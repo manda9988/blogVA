@@ -1,9 +1,10 @@
 <!-- Account.svelte -->
 <script>
   import { onMount } from 'svelte';
-  import { push } from 'svelte-spa-router'; // Importer push de svelte-spa-router
+  import { push } from 'svelte-spa-router';
 
   let articles = [];
+  let username = localStorage.getItem('username'); // Récupérez le username
 
   onMount(async () => {
     const res = await fetch('http://localhost:3002/articles');
@@ -15,7 +16,7 @@
       'Êtes-vous sûr de vouloir modifier cet article?',
     );
     if (confirmEdit) {
-      push(`/edit/${id}`); // Utiliser push pour naviguer vers la nouvelle route
+      push(`/edit/${id}`);
     }
   }
 
@@ -35,10 +36,26 @@
       }
     }
   }
+
+  function handleLogout() {
+    localStorage.removeItem('username');
+    push('/login');
+  }
+
+  async function handleUnsubscribe() {
+    const confirmUnsubscribe = window.confirm(
+      'Êtes-vous sûr de vouloir vous désinscrire ? Cette action est irréversible.',
+    );
+    if (confirmUnsubscribe) {
+      // Ici, vous devrez faire une requête pour supprimer l'utilisateur de la base de données
+      // Après avoir supprimé l'utilisateur, déconnectez-le
+      handleLogout();
+    }
+  }
 </script>
 
 <div class="account-container">
-  <h2>Mon compte</h2>
+  <h2>Bonjour {username}</h2>
 
   <table class="article-table">
     <thead>
@@ -72,4 +89,8 @@
       {/each}
     </tbody>
   </table>
+  <div class="account-buttons">
+    <button on:click={handleLogout}>Déconnexion</button>
+    <button on:click={handleUnsubscribe}>Se désinscrire</button>
+  </div>
 </div>

@@ -1,17 +1,14 @@
 <!-- Register.svelte -->
 <script>
   import { onMount } from 'svelte';
+  import { push } from 'svelte-spa-router'; // Importez push
 
   let email = '';
   let username = '';
   let password = '';
   let confirmPassword = '';
 
-  const API_URL = 'http://localhost:3002'; // Assurez-vous que c'est le bon port
-
-  onMount(() => {
-    // Initialisations si nécessaire
-  });
+  const API_URL = 'http://localhost:3002';
 
   async function handleRegister() {
     if (password !== confirmPassword) {
@@ -29,14 +26,13 @@
       });
 
       if (!response.ok) {
-        const error = await response.json(); // Parse l'erreur en JSON
-        // Affiche un message d'erreur basé sur la réponse du serveur
+        const error = await response.json();
         alert(error.errors.map((err) => err.msg).join('\n'));
         return;
       }
 
       alert('Inscription réussie!');
-      // Redirection si nécessaire
+      push('/login'); // Redirige vers la page de connexion
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
       alert("Erreur lors de l'inscription. Veuillez réessayer.");

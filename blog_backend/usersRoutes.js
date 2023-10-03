@@ -41,9 +41,32 @@ router.post('/register', registerValidators, async (req, res) => {
   }
 });
 
-router.post('/login', (req, res) => {
-  // Implémenter la logique de connexion ici
-  // ...
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 1. Vérifier si l'utilisateur avec cet email existe
+    const user = await pool.query('SELECT * FROM users WHERE email = $1', [
+      email,
+    ]);
+    if (user.rows.length === 0) {
+      return res
+        .status(400)
+        .json({ error: 'Aucun utilisateur trouvé avec cet email' });
+    }
+
+    // 2. Comparer le mot de passe fourni avec le mot de passe haché stocké
+    const validPassword = await bcrypt.compare(password, user.rows[0].password);
+    if (!validPassword) {
+      return res.status(400).json({ error: 'Mot de passe incorrect' });
+    }
+
+    // 3. Si tout est bon, renvoyer un succès
+    res.json({ message: 'Connexion réussie', user: user.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
 });
 
 router.get('/', async (req, res) => {

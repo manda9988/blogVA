@@ -1,19 +1,37 @@
 <!-- Login.svelte -->
 <script>
-  import { push } from 'svelte-spa-router'; // Utilisez push de svelte-spa-router pour la navigation
+  import { push } from 'svelte-spa-router';
   let email = '';
   let password = '';
+  const API_URL = 'http://localhost:3002';
 
-  function handleLogin() {
-    // Gérer la logique de connexion ici
-  }
+  async function handleLogin() {
+    try {
+      const response = await fetch(`${API_URL}/users/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-  function handleLogout() {
-    // Gérer la logique de déconnexion ici
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || 'Erreur de connexion');
+        return;
+      }
+
+      localStorage.setItem('username', data.user.username); // Stockez le username
+      push('/account'); // Redirigez vers la page account après une connexion réussie
+    } catch (error) {
+      console.error('Erreur lors de la connexion:', error);
+      alert('Erreur lors de la connexion. Veuillez réessayer.');
+    }
   }
 
   function goToRegister() {
-    push('/register'); // Naviguer vers la page d'inscription
+    push('/register');
   }
 </script>
 
@@ -31,7 +49,6 @@
 
     <div class="button-group">
       <button type="submit">Se connecter</button>
-      <button on:click={handleLogout}>Déconnexion</button>
     </div>
   </form>
 
