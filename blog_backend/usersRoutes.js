@@ -1,3 +1,4 @@
+// usersRoutes.js
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { check, validationResult } = require('express-validator');
@@ -78,6 +79,22 @@ router.get('/', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
+  }
+});
+
+router.delete('/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+    const result = await pool.query('DELETE FROM users WHERE username = $1', [
+      username,
+    ]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+    res.json({ message: 'Utilisateur supprimé avec succès' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erreur serveur' });
   }
 });
 

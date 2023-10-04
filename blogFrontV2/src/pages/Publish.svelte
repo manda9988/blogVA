@@ -1,9 +1,20 @@
 <!-- Publish.svelte -->
 <script>
+  import { onMount } from 'svelte';
+  import { push } from 'svelte-spa-router';
+
   let title = '';
   let content = '';
   let category = '';
   let file;
+
+  // Vérifiez si l'utilisateur est connecté dès que le composant est monté
+  onMount(() => {
+    if (!localStorage.getItem('username')) {
+      alert('Veuillez vous connecter pour accéder à cette page.');
+      push('/login');
+    }
+  });
 
   function handlePublish() {
     const isConfirmed = window.confirm(
