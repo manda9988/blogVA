@@ -8,12 +8,13 @@
 @import '_variables';
 @import '_global';
 @import '_header-footer';
+@import '_navbar';
 
 // Import de styles spécifiques aux pages
 @import '_home';
 @import '_account';
 @import '_article';
 @import '_login';
-@import '_register'; // Importation du style pour la page d'inscription
+@import '_register';
 @import '_publish';
 @import '_edit';

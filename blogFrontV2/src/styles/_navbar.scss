@@ -1,0 +1,54 @@
+// _navbar.scss
+
+nav ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: lighten($primary-color, 6%);
+  height: 38px;
+  list-style: none;
+  text-transform: uppercase;
+  font-weight: 100;
+  margin-bottom: 20px;
+
+  li {
+    a {
+      font-size: 0.9em;
+
+      position: relative;
+      display: inline-block;
+      user-select: none;
+      padding: 0 8px;
+      margin: 0 14px;
+      text-decoration: none;
+      color: $secondary-color;
+      transition: color 0.3s ease;
+      width: 100px; // Largeur fixe pour les éléments <a>
+      text-align: center; // Centrer le texte
+
+      // Style pour le lien actif
+      &.active {
+        font-weight: 500;
+      }
+
+      // Effet de survol
+      &:hover {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Responsive navbar
+@media (max-width: 600px) {
+  nav ul {
+    li {
+      a {
+        // background: red;
+        font-size: 0.8em;
+        width: 80px; // Réduire la largeur fixe
+        margin: 0 6px; // Réduire la marge
+      }
+    }
+  }
+}
