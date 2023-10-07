@@ -90,7 +90,6 @@
   <table class="article-table">
     <thead>
       <tr>
-        <th class="col-id">ID</th>
         <th class="col-title">Titre</th>
         <th class="col-category">Catégorie</th>
         <th class="col-actions">Actions</th>
@@ -99,7 +98,6 @@
     <tbody>
       {#each articles as article}
         <tr>
-          <td class="col-id">{article.id}</td>
           <td class="col-title">{article.title}</td>
           <td class="col-category">{article.category}</td>
           <td class="col-actions">

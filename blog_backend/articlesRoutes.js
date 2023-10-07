@@ -25,7 +25,13 @@ router.post('/', upload.single('image'), async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM articles ORDER BY id DESC');
+    const result = await pool.query(`
+  SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, users.username, users.id AS user_id
+  FROM articles 
+  LEFT JOIN users ON articles.user_id = users.id
+  ORDER BY articles.id DESC
+`);
+
     res.json(result.rows);
   } catch (err) {
     console.error(err);
