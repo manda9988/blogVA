@@ -1,21 +1,19 @@
 <!-- Login.svelte -->
 <script>
-  import { onMount } from 'svelte'; // Importez onMount de Svelte
+  import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
 
   let email = '';
   let password = '';
   const API_URL = 'http://localhost:3002';
 
-  // Cette fonction vérifie si l'utilisateur est déjà connecté
   function checkIfAlreadyLoggedIn() {
     if (localStorage.getItem('username')) {
       alert("Vous êtes déjà connecté. Redirection vers la page d'accueil.");
-      push('/'); // Redirigez vers la page d'accueil ou toute autre page de votre choix
+      push('/');
     }
   }
 
-  // Appel de la fonction au montage du composant
   onMount(() => {
     checkIfAlreadyLoggedIn();
   });
@@ -37,8 +35,8 @@
         return;
       }
 
-      localStorage.setItem('username', data.user.username); // Stockez le username
-      push('/account'); // Redirigez vers la page account après une connexion réussie
+      localStorage.setItem('username', data.user.username);
+      push('/account');
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
       alert('Erreur lors de la connexion. Veuillez réessayer.');
