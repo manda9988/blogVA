@@ -1,20 +1,49 @@
 // articlesRoutes.js
+require('dotenv').config();
+
 const express = require('express');
 const multer = require('multer');
 const upload = multer({ dest: 'img/' });
 const pool = require('./database');
 const fs = require('fs');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-router.post('/', upload.single('image'), async (req, res) => {
+const authenticateJWT = (req, res, next) => {
+  console.log('Authenticating JWT...'); // Log pour le débogage
+  const authHeader = req.headers.authorization;
+
+  if (authHeader) {
+    console.log('Found Authorization header:', authHeader); // Log pour le débogage
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        console.error('JWT verification failed:', err); // Log pour le débogage
+        return res.status(403).json({ error: 'Token invalide ou expiré' });
+      }
+
+      console.log('JWT verified successfully for user:', user); // Log pour le débogage
+      req.user = user;
+      next();
+    });
+  } else {
+    console.warn('Authorization header missing'); // Log pour le débogage
+    res.status(401).json({ error: 'Token JWT manquant' });
+  }
+};
+
+router.post('/', authenticateJWT, upload.single('image'), async (req, res) => {
   try {
     const { title, content, category } = req.body;
-    const imageurl = `/img/${req.file.filename}`;
+    const userId = req.user.userId;
+    let imageurl = req.file ? `/img/${req.file.filename}` : null; // Vérifiez si req.file est défini
+    const values = [title, content, category, imageurl, userId];
     const result = await pool.query(
-      'INSERT INTO articles (title, content, category, imageurl) VALUES ($1, $2, $3, $4) RETURNING *',
-      [title, content, category, imageurl],
+      'INSERT INTO articles (title, content, category, imageurl, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      values,
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -26,12 +55,11 @@ router.post('/', upload.single('image'), async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query(`
-  SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, users.username, users.id AS user_id
-  FROM articles 
-  LEFT JOIN users ON articles.user_id = users.id
-  ORDER BY articles.id DESC
-`);
-
+      SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, users.username, users.id AS user_id
+      FROM articles 
+      LEFT JOIN users ON articles.user_id = users.id
+      ORDER BY articles.id DESC
+    `);
     res.json(result.rows);
   } catch (err) {
     console.error(err);

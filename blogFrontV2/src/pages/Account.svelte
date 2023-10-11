@@ -5,9 +5,10 @@
 
   let articles = [];
   let username = localStorage.getItem('username'); // Récupérez le username depuis le stockage local
+  const API_URL = 'http://localhost:3002'; // Définissez la API_URL
 
   // Vérifiez si l'utilisateur est connecté dès que le composant est monté
-  onMount(() => {
+  onMount(async () => {
     if (!username) {
       alert('Veuillez vous connecter pour accéder à cette page.');
       push('/login');
@@ -16,6 +17,21 @@
       fetch('http://localhost:3002/articles')
         .then((res) => res.json())
         .then((data) => (articles = data));
+
+      // Vérifiez la validité du token
+      const token = localStorage.getItem('token');
+      if (token) {
+        const response = await fetch(`${API_URL}/verifyToken`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          localStorage.removeItem('username');
+          localStorage.removeItem('token');
+          push('/login');
+        }
+      }
     }
   });
 

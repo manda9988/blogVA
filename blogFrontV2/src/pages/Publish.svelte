@@ -8,7 +8,6 @@
   let category = '';
   let file;
 
-  // Vérifiez si l'utilisateur est connecté dès que le composant est monté
   onMount(() => {
     if (!localStorage.getItem('username')) {
       alert('Veuillez vous connecter pour accéder à cette page.');
@@ -17,6 +16,15 @@
   });
 
   function handlePublish() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert(
+        "Votre session a expiré ou vous n'êtes pas connecté. Veuillez vous reconnecter.",
+      );
+      push('/login');
+      return;
+    }
+
     const isConfirmed = window.confirm(
       'Êtes-vous sûr de vouloir publier cet article ?',
     );
@@ -29,13 +37,15 @@
 
       fetch('http://localhost:3002/articles', {
         method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
         body: formData,
       })
         .then((res) => res.json())
         .then((data) => {
           console.log('Article publié:', data);
-          // Rediriger vers la page d'accueil
-          window.location.href = '/'; // Remplacez '/' par l'URL de votre page d'accueil si nécessaire
+          window.location.href = '/';
         });
     }
   }

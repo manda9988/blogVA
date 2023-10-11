@@ -1,8 +1,11 @@
 // usersRoutes.js
+require('dotenv').config();
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { check, validationResult } = require('express-validator');
 const pool = require('./database');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
@@ -49,14 +52,21 @@ router.post('/login', async (req, res) => {
         .json({ error: 'Aucun utilisateur trouvé avec cet email' });
     }
     const validPassword = await bcrypt.compare(password, user.rows[0].password);
-    if (!validPassword) {
-      return res.status(400).json({ error: 'Mot de passe incorrect' });
+    if (validPassword) {
+      const token = jwt.sign(
+        { userId: user.rows[0].id },
+        process.env.JWT_SECRET,
+        { expiresIn: '4h' },
+      );
+      res.json({
+        message: 'Connexion réussie',
+        user: user.rows[0],
+        userId: user.rows[0].id,
+        token: token,
+      });
+    } else {
+      res.status(400).json({ error: 'Mot de passe incorrect' });
     }
-    res.json({
-      message: 'Connexion réussie',
-      user: user.rows[0],
-      userId: user.rows[0].id,
-    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Erreur serveur' });
@@ -89,6 +99,16 @@ router.delete('/:username', async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'Erreur serveur' });
   }
+});
+
+router.get('/verifyToken', (req, res) => {
+  const token = req.headers.authorization.split(' ')[1];
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: 'Token invalide ou expiré' });
+    }
+    res.status(200).json({ valid: true });
+  });
 });
 
 module.exports = router;

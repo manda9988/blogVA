@@ -14,8 +14,23 @@
     }
   }
 
-  onMount(() => {
+  onMount(async () => {
     checkIfAlreadyLoggedIn();
+
+    // Vérifiez la validité du token
+    const token = localStorage.getItem('token');
+    if (token) {
+      const response = await fetch(`${API_URL}/verifyToken`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        localStorage.removeItem('username');
+        localStorage.removeItem('token');
+        push('/login');
+      }
+    }
   });
 
   async function handleLogin() {
@@ -36,6 +51,8 @@
       }
 
       localStorage.setItem('username', data.user.username);
+      localStorage.setItem('token', data.token); // Ajout du token dans le localStorage
+      console.log('Token stocké:', localStorage.getItem('token')); // Log pour vérifier le token stocké
       push('/account');
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
