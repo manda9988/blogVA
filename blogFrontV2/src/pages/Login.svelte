@@ -52,6 +52,8 @@
 
       localStorage.setItem('username', data.user.username);
       localStorage.setItem('token', data.token); // Ajout du token dans le localStorage
+      localStorage.setItem('userId', data.user.id); // Nouvelle ligne ajoutée
+
       console.log('Token stocké:', localStorage.getItem('token')); // Log pour vérifier le token stocké
       push('/account');
     } catch (error) {

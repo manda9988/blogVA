@@ -38,7 +38,12 @@ const authenticateJWT = (req, res, next) => {
 router.post('/', authenticateJWT, upload.single('image'), async (req, res) => {
   try {
     const { title, content, category } = req.body;
-    const userId = req.user.userId;
+    const userId = req.user && req.user.userId;
+
+    if (!userId) {
+      return res.status(400).send('User ID is missing or invalid');
+    }
+
     let imageurl = req.file ? `/img/${req.file.filename}` : null; // Vérifiez si req.file est défini
     const values = [title, content, category, imageurl, userId];
     const result = await pool.query(
@@ -54,12 +59,18 @@ router.post('/', authenticateJWT, upload.single('image'), async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query(`
+    let query = `
       SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, users.username, users.id AS user_id
       FROM articles 
       LEFT JOIN users ON articles.user_id = users.id
-      ORDER BY articles.id DESC
-    `);
+    `;
+    const values = [];
+    if (req.query.userId) {
+      query += ' WHERE user_id = $1'; // <-- Modification ici
+      values.push(req.query.userId);
+    }
+    query += ' ORDER BY articles.id DESC';
+    const result = await pool.query(query, values);
     res.json(result.rows);
   } catch (err) {
     console.error(err);

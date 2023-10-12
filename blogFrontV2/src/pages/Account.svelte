@@ -4,35 +4,45 @@
   import { push } from 'svelte-spa-router';
 
   let articles = [];
-  let username = localStorage.getItem('username'); // Récupérez le username depuis le stockage local
-  const API_URL = 'http://localhost:3002'; // Définissez la API_URL
+  let username = localStorage.getItem('username');
+  const API_URL = 'http://localhost:3002';
 
-  // Vérifiez si l'utilisateur est connecté dès que le composant est monté
   onMount(async () => {
     if (!username) {
       alert('Veuillez vous connecter pour accéder à cette page.');
       push('/login');
-    } else {
-      // Si connecté, récupérez les articles
-      fetch('http://localhost:3002/articles')
-        .then((res) => res.json())
-        .then((data) => (articles = data));
-
-      // Vérifiez la validité du token
-      const token = localStorage.getItem('token');
-      if (token) {
-        const response = await fetch(`${API_URL}/verifyToken`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          localStorage.removeItem('username');
-          localStorage.removeItem('token');
-          push('/login');
-        }
-      }
+      return;
     }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      push('/login');
+      return;
+    }
+
+    const response = await fetch(`${API_URL}/verifyToken`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      localStorage.removeItem('username');
+      localStorage.removeItem('token');
+      push('/login');
+      return;
+    }
+
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert(
+        "Erreur lors de la récupération de l'ID utilisateur. Veuillez vous déconnecter et vous reconnecter.",
+      );
+      return; // Retirez la redirection vers la page de connexion
+    }
+
+    const res = await fetch(`${API_URL}/articles?userId=${userId}`);
+    articles = await res.json();
   });
 
   // Fonction pour éditer un article
