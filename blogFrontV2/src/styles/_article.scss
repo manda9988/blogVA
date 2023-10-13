@@ -10,7 +10,7 @@
   text-align: center;
 
   h2 {
-    font-size: 2.4em;
+    font-size: 2.6em;
     word-wrap: break-word;
   }
 
@@ -18,9 +18,9 @@
     font-size: 0.8em;
     color: $secondary-color;
     margin-bottom: 1em;
-    background: $primary-color;
+    background: rgb(110, 110, 110);
     display: inline-block;
-    padding: 8px;
+    padding: 1px 12px;
     margin: 6px auto 20px;
     border-radius: 8px;
   }
@@ -75,7 +75,7 @@
 @media (max-width: 600px) {
   .article-container {
     h2 {
-      font-size: 1.6em;
+      font-size: 1.8em;
     }
     p {
       font-size: 0.6em;

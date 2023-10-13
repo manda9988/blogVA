@@ -9,6 +9,8 @@
     content: string;
     category: string;
     imageurl: string; // Attention au nom correct du champ
+    username: string; // Champ pour le nom de l'auteur
+    date: string; // Supposons que la date est une chaîne pour l'instant
   }
 
   let id: string;
@@ -54,6 +56,9 @@
   <div class="article-container">
     <h2>{article?.title}</h2>
     <p>{article?.category}</p>
+    <p>{article?.username}</p>
+    <p>{article?.date}</p>
+
     <div class="article-details">
       {#if article?.imageurl}
         <!-- Attention au nom correct du champ -->

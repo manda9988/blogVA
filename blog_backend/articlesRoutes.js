@@ -60,7 +60,7 @@ router.post('/', authenticateJWT, upload.single('image'), async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     let query = `
-      SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, users.username, users.id AS user_id
+      SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, articles.published_date, users.username, users.id AS user_id  
       FROM articles 
       LEFT JOIN users ON articles.user_id = users.id
     `;
@@ -81,9 +81,11 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM articles WHERE id = $1', [
-      id,
-    ]);
+    const result = await pool.query(
+      'SELECT *, published_date FROM articles WHERE id = $1',
+      [id],
+    ); // <-- MODIFICATION ICI pour inclure published_date
+
     if (result.rows.length > 0) {
       res.json(result.rows[0]);
     } else {
@@ -135,6 +137,28 @@ router.put('/:id', upload.single('image'), async (req, res) => {
   }
 });
 
+// Fonction ajoutée pour nettoyer les images non utilisées
+async function cleanupUnusedImages() {
+  try {
+    const directory = path.join(__dirname, 'img');
+    const filesInDirectory = fs.readdirSync(directory);
+
+    for (const filename of filesInDirectory) {
+      const imagePath = path.join(directory, filename);
+      const imageUrl = `/img/${filename}`;
+      const result = await pool.query(
+        'SELECT * FROM articles WHERE imageurl = $1',
+        [imageUrl],
+      );
+      if (result.rows.length === 0) {
+        fs.unlinkSync(imagePath);
+      }
+    }
+  } catch (err) {
+    console.error('Error during image cleanup:', err);
+  }
+}
+
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -154,6 +178,8 @@ router.delete('/:id', async (req, res) => {
       if (err) console.error('Error deleting image:', err);
     });
     await pool.query('DELETE FROM articles WHERE id = $1', [id]);
+    // Appel de la fonction pour nettoyer les images après la suppression
+    await cleanupUnusedImages();
     res.status(204).send('Article and associated image deleted successfully');
   } catch (err) {
     console.error(err);
