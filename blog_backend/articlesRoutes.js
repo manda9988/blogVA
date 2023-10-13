@@ -81,10 +81,13 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query(
-      'SELECT *, published_date FROM articles WHERE id = $1',
-      [id],
-    ); // <-- MODIFICATION ICI pour inclure published_date
+    const query = `
+      SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, articles.published_date, users.username, users.id AS user_id  
+      FROM articles 
+      LEFT JOIN users ON articles.user_id = users.id
+      WHERE articles.id = $1
+    `;
+    const result = await pool.query(query, [id]);
 
     if (result.rows.length > 0) {
       res.json(result.rows[0]);

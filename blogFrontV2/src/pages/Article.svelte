@@ -10,7 +10,7 @@
     category: string;
     imageurl: string; // Attention au nom correct du champ
     username: string; // Champ pour le nom de l'auteur
-    date: string; // Supposons que la date est une chaîne pour l'instant
+    published_date: string; // Au lieu de 'date'
   }
 
   let id: string;
@@ -48,6 +48,15 @@
       isLoading = false;
     }
   }
+
+  function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }
 </script>
 
 {#if isLoading}
@@ -55,9 +64,9 @@
 {:else}
   <div class="article-container">
     <h2>{article?.title}</h2>
-    <p>{article?.category}</p>
     <p>{article?.username}</p>
-    <p>{article?.date}</p>
+    <p>{article?.category}</p>
+    <p>{article ? formatDate(article.published_date) : ''}</p>
 
     <div class="article-details">
       {#if article?.imageurl}
