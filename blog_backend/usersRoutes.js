@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt');
 const { check, validationResult } = require('express-validator');
 const pool = require('./database');
 const jwt = require('jsonwebtoken');
+const fs = require('fs'); // Modification : ajouté pour la manipulation des fichiers
+const path = require('path'); // Modification : ajouté pour la manipulation des fichiers
 
 const router = express.Router();
 
@@ -16,6 +18,26 @@ const registerValidators = [
     .isLength({ min: 6 })
     .withMessage('Le mot de passe doit contenir au moins 6 caractères'),
 ];
+
+// Fonction pour nettoyer les images non utilisées d'un utilisateur spécifique
+async function cleanupImagesForUser(userId) {
+  // Modification : nouvelle fonction ajoutée
+  try {
+    const articles = await pool.query(
+      'SELECT imageurl FROM articles WHERE user_id = $1',
+      [userId],
+    );
+    for (const row of articles.rows) {
+      const imageUrl = row.imageurl;
+      const imagePath = path.join(__dirname, 'img', path.basename(imageUrl));
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+    }
+  } catch (err) {
+    console.error('Error during image cleanup for user:', err);
+  }
+}
 
 router.post('/register', registerValidators, async (req, res) => {
   const errors = validationResult(req);
@@ -88,12 +110,17 @@ router.get('/', async (req, res) => {
 router.delete('/:username', async (req, res) => {
   try {
     const { username } = req.params;
-    const result = await pool.query('DELETE FROM users WHERE username = $1', [
+    const user = await pool.query('SELECT * FROM users WHERE username = $1', [
       username,
     ]);
-    if (result.rowCount === 0) {
+    if (user.rows.length === 0) {
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
+
+    // Avant de supprimer l'utilisateur, supprimons d'abord ses images.
+    await cleanupImagesForUser(user.rows[0].id); // Modification : ajout de cette ligne
+
+    await pool.query('DELETE FROM users WHERE username = $1', [username]);
     res.json({ message: 'Utilisateur supprimé avec succès' });
   } catch (error) {
     console.error(error);
