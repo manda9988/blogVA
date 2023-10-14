@@ -2,7 +2,7 @@
 <script>
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
-  
+
   let articles = [];
 
   onMount(async () => {
@@ -35,18 +35,21 @@
         <div class="content-container">
           {#if article?.imageurl}
             <div class="image-container">
-              <img src={`http://localhost:3002${article?.imageurl}`} alt={article?.title} />
+              <img
+                src={`http://localhost:3002${article?.imageurl}`}
+                alt={article?.title}
+              />
             </div>
           {:else}
             <div class="image-container default-bg"></div>
           {/if}
           <div class="title">{article.title}</div>
+          <div class="author">Par {article.username}</div>
+          <!-- Ligne ajoutée -->
         </div>
       </div>
     {/each}
   </div>
-  
 </section>
 
 <!-- ... -->
-

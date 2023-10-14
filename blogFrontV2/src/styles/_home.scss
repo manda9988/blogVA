@@ -1,7 +1,5 @@
 // _home.scss
-// -------------------
-// Page d'accueil
-// -------------------
+
 section {
   padding: 1em;
   text-align: center;
@@ -12,9 +10,6 @@ section {
   }
 }
 
-// -------------------
-// Grille d'articles
-// -------------------
 .article-grid {
   display: flex;
   flex-wrap: wrap;
@@ -23,8 +18,6 @@ section {
   margin-left: 170px;
   margin-right: 170px;
 }
-
-// ...
 
 .article-card {
   flex-basis: $article-width;
@@ -77,18 +70,32 @@ section {
     left: 50%;
     transform: translate(-50%, -50%);
     color: white; // Pour une meilleure visibilité sur l'image
-    padding: 5px;
     width: 65%;
     border-radius: 5px;
     // background: pink;
     opacity: 0;
     transition: opacity 0.3s ease;
-    font-size: 1.4em;
+    font-size: 1.8em;
     word-wrap: break-word;
+    text-transform: uppercase;
+  }
+
+  .author {
+    position: absolute;
+    top: calc(
+      50% + 42px
+    ); // ajusté pour positionner correctement l'auteur en dessous du titre
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.9em;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   &:hover {
-    .title {
+    .title,
+    .author {
       opacity: 1;
     }
 
@@ -108,7 +115,11 @@ section {
     margin-right: 8px;
     gap: 8px;
     .title {
-      font-size: 0.8em;
+      font-size: 1em;
+    }
+    .author {
+      font-size: 0.6em;
+      top: calc(50% + 26px);
     }
   }
 }
