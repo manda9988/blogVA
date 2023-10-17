@@ -1,13 +1,17 @@
 <!-- Publish.svelte -->
+
 <script>
+  // Importation des fonctions nécessaires de Svelte et svelte-spa-router
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
 
+  // Initialisation des variables pour le titre, le contenu, la catégorie et le fichier de l'article
   let title = '';
   let content = '';
   let category = '';
   let file;
 
+  // Vérification lors du montage du composant si l'utilisateur est connecté
   onMount(() => {
     if (!localStorage.getItem('username')) {
       alert('Veuillez vous connecter pour accéder à cette page.');
@@ -15,6 +19,7 @@
     }
   });
 
+  // Fonction pour gérer la publication de l'article
   function handlePublish() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -50,16 +55,19 @@
     }
   }
 
+  // Fonction pour gérer le changement de fichier
   function handleFileChange(event) {
     file = event.target.files[0];
   }
 </script>
 
-<!-- HTML Code Publish.svelte -->
+<!-- Section pour la publication d'un nouvel article -->
 <div class="publish-container">
   <h2>Publier un nouvel article</h2>
 
+  <!-- Formulaire de publication -->
   <form on:submit|preventDefault={handlePublish}>
+    <!-- Champ pour le titre de l'article -->
     <div class="input-group">
       <label for="title">Titre</label>
       <input
@@ -71,6 +79,7 @@
       />
     </div>
 
+    <!-- Champ pour la catégorie de l'article -->
     <div class="input-group">
       <label for="category">Catégorie</label>
       <input
@@ -82,11 +91,13 @@
       />
     </div>
 
+    <!-- Champ pour le contenu de l'article -->
     <div class="input-group">
       <label for="content">Contenu</label>
       <textarea id="content" bind:value={content} required></textarea>
     </div>
 
+    <!-- Champ pour l'image de l'article -->
     <div class="input-group">
       <label for="image">Image de l'article</label>
       <input
@@ -97,6 +108,9 @@
       />
     </div>
 
+    <!-- Bouton pour publier l'article -->
     <button type="submit">Publier</button>
   </form>
 </div>
+
+<!-- Ce fichier est le composant de la page de publication d'un nouvel article. Il contient un formulaire permettant à l'utilisateur de saisir le titre, le contenu, la catégorie et l'image de l'article. Une fois le formulaire soumis, l'article est envoyé au backend pour être enregistré. -->

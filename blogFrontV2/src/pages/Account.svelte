@@ -1,31 +1,39 @@
 <!-- Account.svelte -->
+
 <script>
+  // Importation des fonctions nécessaires de Svelte et svelte-spa-router
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
 
+  // Initialisation des variables pour les articles et le nom d'utilisateur
   let articles = [];
   let username = localStorage.getItem('username');
   const API_URL = 'http://localhost:3002';
 
+  // Fonction exécutée lors du montage du composant
   onMount(async () => {
+    // Vérification si l'utilisateur est connecté
     if (!username) {
       alert('Veuillez vous connecter pour accéder à cette page.');
       push('/login');
       return;
     }
 
+    // Vérification de la validité du token
     const token = localStorage.getItem('token');
     if (!token) {
       push('/login');
       return;
     }
 
+    // Vérification du token avec le backend
     const response = await fetch(`${API_URL}/verifyToken`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
+    // Si le token n'est pas valide, déconnexion de l'utilisateur
     if (!response.ok) {
       localStorage.removeItem('username');
       localStorage.removeItem('token');
@@ -33,6 +41,7 @@
       return;
     }
 
+    // Récupération des articles de l'utilisateur
     const userId = localStorage.getItem('userId');
     const userRole = localStorage.getItem('role'); // Supposons que vous stockiez également le rôle de l'utilisateur dans le localStorage
 
@@ -65,8 +74,8 @@
         method: 'DELETE',
       });
 
+      // Mettre à jour la liste des articles après suppression
       if (res.ok) {
-        // Mettre à jour la liste des articles après suppression
         articles = articles.filter((article) => article.id !== id);
       } else {
         alert("Échec de la suppression de l'article.");
@@ -100,8 +109,9 @@
         method: 'DELETE',
       });
 
+      // Se déconnecter après désinscription
       if (res.ok) {
-        logoutWithoutConfirmation(); // Se déconnecter après désinscription
+        logoutWithoutConfirmation();
       } else {
         const data = await res.json();
         alert(data.error || 'Erreur lors de la désinscription');
@@ -110,9 +120,11 @@
   }
 </script>
 
+<!-- Section du compte utilisateur -->
 <div class="account-container">
   <h2>Bonjour {username}✌️😊</h2>
 
+  <!-- Tableau des articles de l'utilisateur -->
   <table class="article-table">
     <thead>
       <tr>
@@ -145,8 +157,11 @@
       {/each}
     </tbody>
   </table>
+  <!-- Boutons de déconnexion et de désinscription -->
   <div class="account-buttons">
     <button on:click={handleLogout}>Déconnexion</button>
     <button on:click={handleUnsubscribe}>Se désinscrire</button>
   </div>
 </div>
+
+<!-- Ce fichier est le composant de la page du compte utilisateur. Il affiche la liste des articles publiés par l'utilisateur avec des options pour éditer ou supprimer chaque article. Il offre également à l'utilisateur la possibilité de se déconnecter ou de se désinscrire. -->

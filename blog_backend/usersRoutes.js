@@ -1,16 +1,18 @@
 // usersRoutes.js
-require('dotenv').config();
 
+// Importation des modules nécessaires
+require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { check, validationResult } = require('express-validator');
 const pool = require('./database');
 const jwt = require('jsonwebtoken');
-const fs = require('fs'); // Modification : ajouté pour la manipulation des fichiers
-const path = require('path'); // Modification : ajouté pour la manipulation des fichiers
+const fs = require('fs'); // Pour la manipulation des fichiers
+const path = require('path'); // Pour la manipulation des chemins de fichiers
 
 const router = express.Router();
 
+// Validations pour l'enregistrement d'un utilisateur
 const registerValidators = [
   check('username').notEmpty().withMessage("Le nom d'utilisateur est requis"),
   check('email').isEmail().withMessage("L'adresse e-mail n'est pas valide"),
@@ -21,7 +23,6 @@ const registerValidators = [
 
 // Fonction pour nettoyer les images non utilisées d'un utilisateur spécifique
 async function cleanupImagesForUser(userId) {
-  // Modification : nouvelle fonction ajoutée
   try {
     const articles = await pool.query(
       'SELECT imageurl FROM articles WHERE user_id = $1',
@@ -39,6 +40,7 @@ async function cleanupImagesForUser(userId) {
   }
 }
 
+// Route pour l'enregistrement d'un nouvel utilisateur
 router.post('/register', registerValidators, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -62,6 +64,7 @@ router.post('/register', registerValidators, async (req, res) => {
   }
 });
 
+// Route pour la connexion d'un utilisateur
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -95,6 +98,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Route pour récupérer tous les utilisateurs
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query(
@@ -107,6 +111,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Route pour supprimer un utilisateur par son nom d'utilisateur
 router.delete('/:username', async (req, res) => {
   try {
     const { username } = req.params;
@@ -118,7 +123,7 @@ router.delete('/:username', async (req, res) => {
     }
 
     // Avant de supprimer l'utilisateur, supprimons d'abord ses images.
-    await cleanupImagesForUser(user.rows[0].id); // Modification : ajout de cette ligne
+    await cleanupImagesForUser(user.rows[0].id);
 
     await pool.query('DELETE FROM users WHERE username = $1', [username]);
     res.json({ message: 'Utilisateur supprimé avec succès' });
@@ -128,6 +133,7 @@ router.delete('/:username', async (req, res) => {
   }
 });
 
+// Route pour vérifier la validité d'un token JWT
 router.get('/verifyToken', (req, res) => {
   const token = req.headers.authorization.split(' ')[1];
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
