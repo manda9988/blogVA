@@ -34,14 +34,14 @@
     }
 
     const userId = localStorage.getItem('userId');
-    if (!userId) {
-      alert(
-        "Erreur lors de la récupération de l'ID utilisateur. Veuillez vous déconnecter et vous reconnecter.",
-      );
-      return; // Retirez la redirection vers la page de connexion
+    const userRole = localStorage.getItem('role'); // Supposons que vous stockiez également le rôle de l'utilisateur dans le localStorage
+
+    let articlesEndpoint = `${API_URL}/articles`;
+    if (userRole !== 'admin') {
+      articlesEndpoint += `?userId=${userId}`;
     }
 
-    const res = await fetch(`${API_URL}/articles?userId=${userId}`);
+    const res = await fetch(articlesEndpoint);
     articles = await res.json();
   });
 
