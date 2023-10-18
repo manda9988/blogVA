@@ -1,7 +1,7 @@
 <!-- Error404.svelte -->
 
 <script>
-  // Vous pouvez inclure n'importe quel script nécessaire ici
+  // Vous pouvez inclure n'importe quel script nécessaire icii
 </script>
 
 <main>
