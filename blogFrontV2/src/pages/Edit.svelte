@@ -1,8 +1,11 @@
 <!-- Edit.svelte -->
+
 <script lang="ts">
+  // Importation des fonctions nécessaires de Svelte et svelte-spa-router
   import { params } from 'svelte-spa-router';
   import { onMount } from 'svelte';
 
+  // Définition de l'interface pour un article
   interface Article {
     id: number;
     title: string;
@@ -11,6 +14,7 @@
     imageurl: string;
   }
 
+  // Initialisation des variables pour l'article et son chargement
   let id: string;
   let article: Article = {
     id: 0,
@@ -20,11 +24,13 @@
     imageurl: '',
   };
   let isLoading = true;
-  let file; // Déclarez une variable pour stocker le fichier
+  let file; // Variable pour stocker le fichier image
 
+  // Fonction exécutée lors du montage du composant
   onMount(() => {
     console.log('Edit Component Mounted');
 
+    // Souscription aux paramètres pour obtenir l'ID de l'article
     const unsubscribe = params.subscribe(($params) => {
       console.log('Received Params:', $params);
 
@@ -40,10 +46,11 @@
     });
 
     return () => {
-      unsubscribe();
+      unsubscribe(); // Se désabonner lorsque le composant est démonté
     };
   });
 
+  // Fonction pour charger les données de l'article
   async function loadData() {
     try {
       console.log(`Loading data for article ID: ${id}`);
@@ -57,6 +64,7 @@
     }
   }
 
+  // Fonction pour gérer la modification de l'article
   function handleEdit() {
     const isConfirmed = confirm(
       'Êtes-vous sûr de vouloir sauvegarder les modifications?',
@@ -83,6 +91,7 @@
       });
   }
 
+  // Fonction pour gérer le changement de fichier
   function handleFileChange(event) {
     file = event.target.files[0]; // Stockez le fichier dans la variable
     if (file) {
@@ -96,6 +105,7 @@
   }
 </script>
 
+<!-- Affichage du formulaire de modification -->
 {#if isLoading}
   <div>Loading...</div>
 {:else}
@@ -156,3 +166,5 @@
     </form>
   </div>
 {/if}
+
+<!-- Ce fichier est le composant de la page d'édition d'article. Il fournit un formulaire permettant à l'utilisateur de modifier les détails d'un article existant, y compris son titre, sa catégorie, son contenu et son image. Une fois les modifications effectuées, l'utilisateur peut sauvegarder les changements, qui sont ensuite envoyés au backend pour mise à jour. -->
