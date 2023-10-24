@@ -9,6 +9,7 @@
   let email = '';
   let password = '';
   const API_URL = 'http://localhost:3002';
+  const LOGOUT_FLAG = 'autoLoggedOut'; // <-- Ajout de la constante
 
   // Fonction pour vérifier si l'utilisateur est déjà connecté
   function checkIfAlreadyLoggedIn() {
@@ -60,6 +61,8 @@
       localStorage.setItem('token', data.token); // Stockage du token
       localStorage.setItem('userId', data.user.id);
       localStorage.setItem('role', data.user.role); // Stockage du rôle de l'utilisateur
+
+      localStorage.removeItem(LOGOUT_FLAG); // <-- Ajout de cette ligne pour réinitialiser l'indicateur
 
       console.log('Token stocké:', localStorage.getItem('token'));
       push('/account');

@@ -4,6 +4,7 @@
   // Importation des fonctions nécessaires de Svelte et svelte-spa-router
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
+  import AutoLogout from '../lib/AutoLogout.svelte'; // <-- Ajout de l'importation
 
   // Initialisation des variables pour les articles et le nom d'utilisateur
   let articles = [];
@@ -119,6 +120,9 @@
     }
   }
 </script>
+
+<AutoLogout />
+<!-- <-- Ajout du composant AutoLogout -->
 
 <!-- Section du compte utilisateur -->
 <div class="account-container">

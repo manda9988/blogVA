@@ -4,6 +4,7 @@
   // Importation des fonctions nécessaires de Svelte et svelte-spa-router
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
+  import AutoLogout from '../lib/AutoLogout.svelte'; // <-- Ajout de l'importation
 
   // Initialisation des variables pour le titre, le contenu, la catégorie et le fichier de l'article
   let title = '';
@@ -60,6 +61,9 @@
     file = event.target.files[0];
   }
 </script>
+
+<AutoLogout />
+<!-- <-- Ajout du composant AutoLogout -->
 
 <!-- Section pour la publication d'un nouvel article -->
 <div class="publish-container">
