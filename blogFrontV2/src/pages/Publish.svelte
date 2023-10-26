@@ -13,10 +13,25 @@
   let file;
 
   // Vérification lors du montage du composant si l'utilisateur est connecté
-  onMount(() => {
+  onMount(async () => {
     if (!localStorage.getItem('username')) {
       alert('Veuillez vous connecter pour accéder à cette page.');
       push('/login');
+    } else {
+      const userId = localStorage.getItem('userId');
+      const role = localStorage.getItem('role'); // Récupérer le rôle de l'utilisateur
+
+      if (role !== 'admin') {
+        // Si l'utilisateur n'est pas un administrateur
+        const response = await fetch(
+          `http://localhost:3002/articles/countByUser/${userId}`,
+        );
+        const data = await response.json();
+        if (data.count >= 1) {
+          alert('Vous êtes limité à un seul article.');
+          push('/'); // Redirige vers la page d'accueil
+        }
+      }
     }
   });
 

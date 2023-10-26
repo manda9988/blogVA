@@ -10,13 +10,11 @@
   function resetInactivityTimer() {
     if (localStorage.getItem(LOGOUT_FLAG)) return; // <-- Si l'indicateur est présent, ne pas réinitialiser le timer
     clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(logoutDueToInactivity, 10000); // 10000ms = 10 seconds for testing
+    inactivityTimer = setTimeout(logoutDueToInactivity, 600000); // 10min
   }
 
   function logoutDueToInactivity() {
-    alert(
-      "Vous avez été déconnecté en raison d'une inactivité de 10 secondes.",
-    );
+    alert("Vous avez été déconnecté en raison d'une inactivité de 10 minutes.");
     localStorage.removeItem('username');
     localStorage.removeItem('token');
     localStorage.removeItem('userId');

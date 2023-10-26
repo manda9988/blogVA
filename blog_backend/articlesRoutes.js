@@ -81,6 +81,18 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Route pour obtenir le nombre d'articles publiés par un utilisateur spécifique
+router.get('/countByUser/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const query = `
+        SELECT COUNT(*) 
+        FROM articles 
+        WHERE user_id = $1
+    `;
+  const result = await pool.query(query, [userId]);
+  res.json({ count: parseInt(result.rows[0].count) });
+});
+
 // Route pour mettre à jour un article spécifique par ID
 router.put(
   '/:id',
