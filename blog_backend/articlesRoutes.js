@@ -25,8 +25,13 @@ router.get('/', async (req, res) => {
     values.push(req.query.userId);
   }
   query += ' ORDER BY articles.id DESC';
-  const result = await pool.query(query, values);
-  res.json(result.rows);
+  try {
+    const result = await pool.query(query, values);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Erreur lors de la requête à la base de données:', error);
+    res.status(500).send('Erreur interne du serveur');
+  }
 });
 
 // Route pour créer un nouvel article
@@ -39,11 +44,16 @@ router.post(
     const userId = req.user && req.user.userId;
     let imageurl = req.file ? `/img/${req.file.filename}` : null;
     const values = [title, content, category, imageurl, userId];
-    const result = await pool.query(
-      'INSERT INTO articles (title, content, category, imageurl, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      values,
-    );
-    res.status(201).json(result.rows[0]);
+    try {
+      const result = await pool.query(
+        'INSERT INTO articles (title, content, category, imageurl, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        values,
+      );
+      res.status(201).json(result.rows[0]);
+    } catch (error) {
+      console.error('Erreur lors de la requête à la base de données:', error);
+      res.status(500).send('Erreur interne du serveur');
+    }
   },
 );
 
@@ -56,11 +66,16 @@ router.get('/:id', async (req, res) => {
         LEFT JOIN users ON articles.user_id = users.id
         WHERE articles.id = $1
     `;
-  const result = await pool.query(query, [id]);
-  if (result.rows.length > 0) {
-    res.json(result.rows[0]);
-  } else {
-    res.status(404).send('Article not found');
+  try {
+    const result = await pool.query(query, [id]);
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).send('Article not found');
+    }
+  } catch (error) {
+    console.error('Erreur lors de la requête à la base de données:', error);
+    res.status(500).send('Erreur interne du serveur');
   }
 });
 
@@ -72,66 +87,80 @@ router.get('/countByUser/:userId', async (req, res) => {
         FROM articles 
         WHERE user_id = $1
     `;
-  const result = await pool.query(query, [userId]);
-  res.json({ count: parseInt(result.rows[0].count) });
+  try {
+    const result = await pool.query(query, [userId]);
+    res.json({ count: parseInt(result.rows[0].count) });
+  } catch (error) {
+    console.error('Erreur lors de la requête à la base de données:', error);
+    res.status(500).send('Erreur interne du serveur');
+  }
 });
 
 // Route pour mettre à jour un article spécifique par ID
 router.put(
   '/:id',
+  authenticateJWT,
   multer({ dest: 'img/' }).single('image'),
   async (req, res) => {
     const { id } = req.params;
     const { title, content, category } = req.body;
-    const existingArticle = await pool.query(
-      'SELECT * FROM articles WHERE id = $1',
-      [id],
-    );
-    const oldImageurl = existingArticle.rows[0].imageurl;
-    let newImageurl = req.file ? `/img/${req.file.filename}` : undefined;
-    if (newImageurl) {
-      const oldImagePath = path.join(
-        __dirname,
-        'img',
-        path.basename(oldImageurl),
+    try {
+      const existingArticle = await pool.query(
+        'SELECT * FROM articles WHERE id = $1',
+        [id],
       );
-      fs.unlink(oldImagePath, (err) => {
-        if (err) console.error('Error deleting old image:', err);
-      });
-    } else {
-      newImageurl = oldImageurl;
-    }
-    const values = [title, content, category, newImageurl, id];
-    const query =
-      'UPDATE articles SET title = $1, content = $2, category = $3, imageurl = $4 WHERE id = $5 RETURNING *';
-    const result = await pool.query(query, values);
-    if (result.rows.length > 0) {
-      res.json(result.rows[0]);
-    } else {
-      res.status(404).send('Article not found');
+      const oldImageurl = existingArticle.rows[0].imageurl;
+      let newImageurl = req.file ? `/img/${req.file.filename}` : undefined;
+      if (newImageurl) {
+        const oldImagePath = path.join(
+          __dirname,
+          'img',
+          path.basename(oldImageurl),
+        );
+        fs.unlinkSync(oldImagePath);
+      } else {
+        newImageurl = oldImageurl;
+      }
+      const values = [title, content, category, newImageurl, id];
+      const query =
+        'UPDATE articles SET title = $1, content = $2, category = $3, imageurl = $4 WHERE id = $5 RETURNING *';
+      const result = await pool.query(query, values);
+      if (result.rows.length > 0) {
+        res.json(result.rows[0]);
+      } else {
+        res.status(404).send('Article not found');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la requête à la base de données:', error);
+      res.status(500).send('Erreur interne du serveur');
     }
   },
 );
 
 // Route pour supprimer un article spécifique par ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
-  const result = await pool.query('SELECT * FROM articles WHERE id = $1', [id]);
-  if (result.rows.length === 0) {
-    return res.status(404).send('Article not found');
+  try {
+    const result = await pool.query('SELECT * FROM articles WHERE id = $1', [
+      id,
+    ]);
+    if (result.rows.length === 0) {
+      return res.status(404).send('Article not found');
+    }
+    const article = result.rows[0];
+    const imagePath = path.join(
+      __dirname,
+      'img',
+      path.basename(article.imageurl),
+    );
+    fs.unlinkSync(imagePath);
+    await pool.query('DELETE FROM articles WHERE id = $1', [id]);
+    await cleanupUnusedImages();
+    res.status(204).send('Article and associated image deleted successfully');
+  } catch (error) {
+    console.error('Erreur lors de la requête à la base de données:', error);
+    res.status(500).send('Erreur interne du serveur');
   }
-  const article = result.rows[0];
-  const imagePath = path.join(
-    __dirname,
-    'img',
-    path.basename(article.imageurl),
-  );
-  fs.unlink(imagePath, (err) => {
-    if (err) console.error('Error deleting image:', err);
-  });
-  await pool.query('DELETE FROM articles WHERE id = $1', [id]);
-  await cleanupUnusedImages();
-  res.status(204).send('Article and associated image deleted successfully');
 });
 
 module.exports = router;

@@ -10,7 +10,7 @@
   function resetInactivityTimer() {
     if (localStorage.getItem(LOGOUT_FLAG)) return; // <-- Si l'indicateur est présent, ne pas réinitialiser le timer
     clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(logoutDueToInactivity, 600000); // 10min
+    inactivityTimer = setTimeout(logoutDueToInactivity, 60000); // 10min
   }
 
   function logoutDueToInactivity() {
