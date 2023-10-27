@@ -1,33 +1,33 @@
 // articlesRoutes.js
 
-// Importation des modules nécessaires
-require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const pool = require('./database');
 const fs = require('fs');
 const path = require('path');
-const jwt = require('jsonwebtoken');
+
+// Importation des utilitaires et middlewares séparés
+const authenticateJWT = require('./authMiddleware');
+const cleanupUnusedImages = require('./imageUtils');
 
 const router = express.Router();
 
-// Middleware pour authentifier le JWT
-const authenticateJWT = (req, res, next) => {
-  // Vérification de la présence du header d'autorisation
-  const authHeader = req.headers.authorization;
-  if (authHeader) {
-    const token = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) {
-        return res.status(403).json({ error: 'Token invalide ou expiré' });
-      }
-      req.user = user;
-      next();
-    });
-  } else {
-    res.status(401).json({ error: 'Token JWT manquant' });
+// Route pour récupérer tous les articles
+router.get('/', async (req, res) => {
+  let query = `
+        SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, articles.published_date, users.username, users.id AS user_id  
+        FROM articles 
+        LEFT JOIN users ON articles.user_id = users.id
+    `;
+  const values = [];
+  if (req.query.userId) {
+    query += ' WHERE user_id = $1';
+    values.push(req.query.userId);
   }
-};
+  query += ' ORDER BY articles.id DESC';
+  const result = await pool.query(query, values);
+  res.json(result.rows);
+});
 
 // Route pour créer un nouvel article
 router.post(
@@ -46,23 +46,6 @@ router.post(
     res.status(201).json(result.rows[0]);
   },
 );
-
-// Route pour récupérer tous les articles
-router.get('/', async (req, res) => {
-  let query = `
-        SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, articles.published_date, users.username, users.id AS user_id  
-        FROM articles 
-        LEFT JOIN users ON articles.user_id = users.id
-    `;
-  const values = [];
-  if (req.query.userId) {
-    query += ' WHERE user_id = $1';
-    values.push(req.query.userId);
-  }
-  query += ' ORDER BY articles.id DESC';
-  const result = await pool.query(query, values);
-  res.json(result.rows);
-});
 
 // Route pour récupérer un article spécifique par ID
 router.get('/:id', async (req, res) => {
@@ -129,23 +112,6 @@ router.put(
     }
   },
 );
-
-// Fonction pour nettoyer les images non utilisées
-async function cleanupUnusedImages() {
-  const directory = path.join(__dirname, 'img');
-  const filesInDirectory = fs.readdirSync(directory);
-  for (const filename of filesInDirectory) {
-    const imagePath = path.join(directory, filename);
-    const imageUrl = `/img/${filename}`;
-    const result = await pool.query(
-      'SELECT * FROM articles WHERE imageurl = $1',
-      [imageUrl],
-    );
-    if (result.rows.length === 0) {
-      fs.unlinkSync(imagePath);
-    }
-  }
-}
 
 // Route pour supprimer un article spécifique par ID
 router.delete('/:id', async (req, res) => {
