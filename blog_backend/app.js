@@ -8,6 +8,9 @@ require('dotenv').config(); // Configuration des variables d'environnement
 const express = require('express'); // Framework web pour Node.js
 const cors = require('cors'); // Middleware pour activer les requêtes cross-origin
 
+// Importation de la configuration CORS
+const corsConfig = require('./corsConfig');
+
 // Importation des modules propres (routes personnalisées)
 const articlesRoutes = require('./articlesRoutes'); // Routes pour les articles
 const usersRoutes = require('./usersRoutes'); // Routes pour les utilisateurs
@@ -16,14 +19,7 @@ const usersRoutes = require('./usersRoutes'); // Routes pour les utilisateurs
 const app = express();
 
 // Configuration CORS pour permettre les requêtes cross-origin
-// Ceci est nécessaire si le frontend et le backend sont sur des ports différents
-app.use(
-  cors({
-    origin: 'http://localhost:5173', // Adresse du frontend
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Méthodes HTTP autorisées
-    credentials: true, // Autorise les cookies et les en-têtes d'authentification
-  }),
-);
+app.use(cors(corsConfig));
 
 // Middleware pour servir les images depuis le dossier 'img'
 app.use('/img', express.static(path.join(__dirname, 'img')));
