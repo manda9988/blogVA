@@ -71,8 +71,12 @@
       `Êtes-vous sûr de vouloir supprimer l'article ${title}?`,
     );
     if (confirmDelete) {
+      const token = localStorage.getItem('token');
       const res = await fetch(`http://localhost:3002/articles/${id}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Mettre à jour la liste des articles après suppression
