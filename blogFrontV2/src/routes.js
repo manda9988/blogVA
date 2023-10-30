@@ -29,6 +29,7 @@ const routes = {
 // Code de débogage pour vérifier les routes définies et confirmer que le fichier est chargé
 console.log('Defined routes:', routes);
 console.log('Debug: Routes loaded');
+console.log('Routes defined:', routes); // MODIFICATION: Log pour afficher les routes définies
 
 // Exportation des routes pour être utilisées dans d'autres fichiers
 export default routes;

@@ -1,8 +1,9 @@
 <!-- Article.svelte -->
 
 <script lang="ts">
-  // Importation des fonctions nécessaires de Svelte et svelte-spa-router
-  import { params } from 'svelte-spa-router';
+  export let params; // Utilisez cette prop pour recevoir les params depuis le composant parent ou le routeur
+
+  // Importation des fonctions nécessaires de Svelte
   import { onMount } from 'svelte';
 
   // Définition de l'interface pour un article
@@ -11,9 +12,9 @@
     title: string;
     content: string;
     category: string;
-    imageurl: string; // Attention au nom correct du champ
-    username: string; // Champ pour le nom de l'auteur
-    published_date: string; // Au lieu de 'date'
+    imageurl: string;
+    username: string;
+    published_date: string;
   }
 
   // Initialisation des variables pour l'article et son chargement
@@ -23,24 +24,18 @@
 
   // Fonction exécutée lors du montage du composant
   onMount(() => {
-    console.log('Component mounted'); // Debug log
+    console.log('Article component mounted');
 
-    // Souscription aux paramètres pour obtenir l'ID de l'article
-    const unsubscribe = params.subscribe(($params) => {
-      console.log('Params received:', $params);
-
-      if ($params && $params.id) {
-        id = $params.id;
-        loadData().then(() => {
-          isLoading = false;
-        });
-      } else {
-        console.error('ID not provided');
+    // MODIFICATION: Utilisez directement la prop params pour obtenir l'ID
+    if (params && params.id) {
+      id = params.id;
+      loadData().then(() => {
         isLoading = false;
-      }
-    });
-
-    return unsubscribe; // Se désabonner lorsque le composant est démonté
+      });
+    } else {
+      console.error('ID not provided');
+      isLoading = false;
+    }
   });
 
   // Fonction pour charger les données de l'article
@@ -49,7 +44,7 @@
     if (res.ok) {
       article = await res.json();
       console.log("Données de l'article :", article);
-      console.log("URL de l'image :", article?.imageurl); // Attention au nom correct du champ
+      console.log("URL de l'image :", article?.imageurl);
     } else {
       console.error('Failed to load article');
       isLoading = false;
@@ -79,14 +74,12 @@
 
     <div class="article-details">
       {#if article?.imageurl}
-        <!-- Attention au nom correct du champ -->
         <div class="article-image-container">
           <img
             src={`http://localhost:3002${article?.imageurl}`}
             alt={article?.title}
             class="article-image"
           />
-          <!-- Attention au nom correct du champ -->
         </div>
       {:else}
         <div class="article-image-container default-bg"></div>
@@ -97,5 +90,3 @@
     </div>
   </div>
 {/if}
-
-<!-- Ce fichier est le composant de la page d'article. Il affiche les détails d'un article spécifique basé sur l'ID fourni dans l'URL. Les détails incluent le titre, l'auteur, la catégorie, la date de publication, l'image et le contenu de l'article. -->

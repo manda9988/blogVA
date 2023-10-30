@@ -18,11 +18,11 @@
 
   // Fonction pour naviguer vers la page d'un article spécifique
   function navigateToArticle(id, event) {
-    // Vérification du type d'événement (click ou keydown avec la touche 'Enter')
     if (
       event.type === 'click' ||
       (event.type === 'keydown' && event.key === 'Enter')
     ) {
+      console.log('Navigating to Article with ID:', id); // MODIFICATION: Log pour confirmer la navigation
       push(`/article/${id}`);
     }
   }

@@ -1,8 +1,7 @@
 <!-- Edit.svelte -->
 
 <script lang="ts">
-  // Importation des fonctions nécessaires de Svelte et svelte-spa-router
-  import { params } from 'svelte-spa-router';
+  // Importation des fonctions nécessaires de Svelte
   import { onMount } from 'svelte';
 
   // Définition de l'interface pour un article
@@ -12,6 +11,12 @@
     content: string;
     category: string;
     imageurl: string;
+  }
+
+  // Définition de l'interface pour params
+  interface Params {
+    id?: string; // Le '?' indique que la propriété est optionnelle
+    [key: string]: any; // Pour d'autres propriétés potentielles
   }
 
   // Initialisation des variables pour l'article et son chargement
@@ -26,28 +31,22 @@
   let isLoading = true;
   let file; // Variable pour stocker le fichier image
 
+  export let params: Params = {}; // <-- MODIFICATION: Typage avec Params
+
   // Fonction exécutée lors du montage du composant
   onMount(() => {
     console.log('Edit Component Mounted');
+    console.log('Received Params:', params); // <-- MODIFICATION: Accès direct
 
-    // Souscription aux paramètres pour obtenir l'ID de l'article
-    const unsubscribe = params.subscribe(($params) => {
-      console.log('Received Params:', $params);
-
-      if ($params && $params.id) {
-        id = $params.id;
-        loadData().then(() => {
-          isLoading = false;
-        });
-      } else {
-        console.error('ID not provided');
+    if (params && params.id) {
+      id = params.id;
+      loadData().then(() => {
         isLoading = false;
-      }
-    });
-
-    return () => {
-      unsubscribe(); // Se désabonner lorsque le composant est démonté
-    };
+      });
+    } else {
+      console.error('ID not provided');
+      isLoading = false;
+    }
   });
 
   // Fonction pour charger les données de l'article
@@ -77,9 +76,20 @@
     formData.append('category', article.category);
     if (file) formData.append('image', file); // Ajoutez le fichier image seulement s'il est présent
 
+    console.log('Données envoyées:', {
+      title: article.title,
+      content: article.content,
+      category: article.category,
+      image: file,
+    });
+    const token = localStorage.getItem('token'); // Récupérez le token du localStorage
+
     fetch(`http://localhost:3002/articles/${id}`, {
       method: 'PUT',
-      body: formData, // Utilisez FormData ici
+      headers: {
+        Authorization: `Bearer ${token}`, // Ajoutez le token à l'en-tête de la requête
+      },
+      body: formData,
     })
       .then((response) => response.json())
       .then((data) => {
@@ -166,5 +176,3 @@
     </form>
   </div>
 {/if}
-
-<!-- Ce fichier est le composant de la page d'édition d'article. Il fournit un formulaire permettant à l'utilisateur de modifier les détails d'un article existant, y compris son titre, sa catégorie, son contenu et son image. Une fois les modifications effectuées, l'utilisateur peut sauvegarder les changements, qui sont ensuite envoyés au backend pour mise à jour. -->

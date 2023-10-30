@@ -102,15 +102,32 @@ router.put(
   authenticateJWT,
   multer({ dest: 'img/' }).single('image'),
   async (req, res) => {
+    console.log("Mise à jour de l'article avec l'ID:", req.params.id); // Log pour confirmer que la route est atteinte
+    console.log(
+      "Requête reçue pour mettre à jour l'article avec l'ID:",
+      req.params.id,
+    );
+    console.log('Données reçues:', req.body);
+
     const { id } = req.params;
     const { title, content, category } = req.body;
+
     try {
       const existingArticle = await pool.query(
         'SELECT * FROM articles WHERE id = $1',
         [id],
       );
+
+      if (existingArticle.rows.length === 0) {
+        console.error("Article non trouvé pour l'ID:", id);
+        return res.status(404).send('Article not found');
+      }
+
+      console.log('Article existant:', existingArticle.rows[0]); // Log pour voir les détails de l'article existant
+
       const oldImageurl = existingArticle.rows[0].imageurl;
       let newImageurl = req.file ? `/img/${req.file.filename}` : undefined;
+
       if (newImageurl) {
         const oldImagePath = path.join(
           __dirname,
@@ -118,20 +135,25 @@ router.put(
           path.basename(oldImageurl),
         );
         fs.unlinkSync(oldImagePath);
+        console.log('Ancienne image supprimée:', oldImagePath); // Log pour confirmer la suppression de l'ancienne image
       } else {
         newImageurl = oldImageurl;
       }
+
       const values = [title, content, category, newImageurl, id];
       const query =
         'UPDATE articles SET title = $1, content = $2, category = $3, imageurl = $4 WHERE id = $5 RETURNING *';
       const result = await pool.query(query, values);
+
+      console.log('Article mis à jour:', result.rows[0]); // Log pour voir les détails de l'article mis à jour
+
       if (result.rows.length > 0) {
         res.json(result.rows[0]);
       } else {
-        res.status(404).send('Article not found');
+        res.status(404).send('Article not found after update');
       }
     } catch (error) {
-      console.error('Erreur lors de la requête à la base de données:', error);
+      console.error("Erreur lors de la mise à jour de l'article:", error); // Log pour voir les détails de l'erreur
       res.status(500).send('Erreur interne du serveur');
     }
   },
