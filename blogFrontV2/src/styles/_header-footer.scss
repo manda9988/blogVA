@@ -7,6 +7,13 @@ header {
   padding: 7px 0 0 15px;
   background-color: $primary-color;
   color: $secondary-color;
+  a {
+    text-decoration: none; // Supprime le soulignement du lien
+    color: inherit; // Hérite de la couleur du parent, dans ce cas, $secondary-color
+    &:hover {
+      text-decoration: none; // Assurez-vous qu'il n'y a pas de soulignement même au survol
+    }
+  }
   h1 {
     user-select: none;
     font-family: $font-familyH1;

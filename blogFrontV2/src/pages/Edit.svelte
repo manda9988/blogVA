@@ -29,7 +29,7 @@
     imageurl: '',
   };
   let isLoading = true;
-  let file; // Variable pour stocker le fichier image
+  let file: File | null = null; // Variable pour stocker le fichier image
 
   export let params: Params = {}; // <-- MODIFICATION: Typage avec Params
 

@@ -6,5 +6,7 @@
 -->
 
 <header>
-  <h1>BLOG</h1>
+  <a href="/">
+    <h1>BLOGG</h1>
+  </a>
 </header>

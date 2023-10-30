@@ -1,10 +1,17 @@
 <!-- Article.svelte -->
 
 <script lang="ts">
-  export let params; // Utilisez cette prop pour recevoir les params depuis le composant parent ou le routeur
+  // Définition de l'interface pour params
+  interface Params {
+    id?: string; // Le '?' indique que la propriété est optionnelle
+    [key: string]: any; // Pour d'autres propriétés potentielles
+  }
+
+  export let params: Params;
 
   // Importation des fonctions nécessaires de Svelte
   import { onMount } from 'svelte';
+  import AutoLogout from '../lib/AutoLogout.svelte'; // <-- Ajout de l'importation
 
   // Définition de l'interface pour un article
   interface Article {
@@ -61,6 +68,9 @@
     });
   }
 </script>
+
+<AutoLogout />
+<!-- <-- Ajout du composant AutoLogout -->
 
 <!-- Affichage de l'article -->
 {#if isLoading}
