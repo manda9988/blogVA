@@ -29,8 +29,8 @@ router.get('/', async (req, res) => {
     const result = await pool.query(query, values);
     res.json(result.rows);
   } catch (error) {
-    console.error('Erreur lors de la requête à la base de données:', error);
-    res.status(500).send('Erreur interne du serveur');
+    console.error('Error querying the database:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
@@ -51,8 +51,8 @@ router.post(
       );
       res.status(201).json(result.rows[0]);
     } catch (error) {
-      console.error('Erreur lors de la requête à la base de données:', error);
-      res.status(500).send('Erreur interne du serveur');
+      console.error('Error querying the database:', error);
+      res.status(500).send('Internal Server Error');
     }
   },
 );
@@ -74,8 +74,8 @@ router.get('/:id', async (req, res) => {
       res.status(404).send('Article not found');
     }
   } catch (error) {
-    console.error('Erreur lors de la requête à la base de données:', error);
-    res.status(500).send('Erreur interne du serveur');
+    console.error('Error querying the database:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
@@ -91,8 +91,8 @@ router.get('/countByUser/:userId', async (req, res) => {
     const result = await pool.query(query, [userId]);
     res.json({ count: parseInt(result.rows[0].count) });
   } catch (error) {
-    console.error('Erreur lors de la requête à la base de données:', error);
-    res.status(500).send('Erreur interne du serveur');
+    console.error('Error querying the database:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
@@ -102,13 +102,6 @@ router.put(
   authenticateJWT,
   multer({ dest: 'img/' }).single('image'),
   async (req, res) => {
-    console.log("Mise à jour de l'article avec l'ID:", req.params.id); // Log pour confirmer que la route est atteinte
-    console.log(
-      "Requête reçue pour mettre à jour l'article avec l'ID:",
-      req.params.id,
-    );
-    console.log('Données reçues:', req.body);
-
     const { id } = req.params;
     const { title, content, category } = req.body;
 
@@ -119,11 +112,8 @@ router.put(
       );
 
       if (existingArticle.rows.length === 0) {
-        console.error("Article non trouvé pour l'ID:", id);
         return res.status(404).send('Article not found');
       }
-
-      console.log('Article existant:', existingArticle.rows[0]); // Log pour voir les détails de l'article existant
 
       const oldImageurl = existingArticle.rows[0].imageurl;
       let newImageurl = req.file ? `/img/${req.file.filename}` : undefined;
@@ -135,7 +125,6 @@ router.put(
           path.basename(oldImageurl),
         );
         fs.unlinkSync(oldImagePath);
-        console.log('Ancienne image supprimée:', oldImagePath); // Log pour confirmer la suppression de l'ancienne image
       } else {
         newImageurl = oldImageurl;
       }
@@ -145,16 +134,14 @@ router.put(
         'UPDATE articles SET title = $1, content = $2, category = $3, imageurl = $4 WHERE id = $5 RETURNING *';
       const result = await pool.query(query, values);
 
-      console.log('Article mis à jour:', result.rows[0]); // Log pour voir les détails de l'article mis à jour
-
       if (result.rows.length > 0) {
         res.json(result.rows[0]);
       } else {
         res.status(404).send('Article not found after update');
       }
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'article:", error); // Log pour voir les détails de l'erreur
-      res.status(500).send('Erreur interne du serveur');
+      console.error('Error updating the article:', error);
+      res.status(500).send('Internal Server Error');
     }
   },
 );
@@ -180,8 +167,8 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
     await cleanupUnusedImages();
     res.status(204).send('Article and associated image deleted successfully');
   } catch (error) {
-    console.error('Erreur lors de la requête à la base de données:', error);
-    res.status(500).send('Erreur interne du serveur');
+    console.error('Error querying the database:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 

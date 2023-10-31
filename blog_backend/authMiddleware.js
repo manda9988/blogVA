@@ -4,11 +4,9 @@ const jwt = require('jsonwebtoken');
 
 const authenticateJWT = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  console.log('Auth Header:', authHeader); // Ajoutez cette ligne pour afficher l'en-tête d'autorisation
 
   if (authHeader) {
     const token = authHeader.split(' ')[1];
-    console.log('JWT Token:', token); // Ajoutez cette ligne pour afficher le token JWT
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
