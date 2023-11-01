@@ -11,7 +11,7 @@ const cors = require('cors');
 // Importation des configurations et routes personnalisées
 const corsConfig = require('./corsConfig');
 const articlesRoutes = require('./routes/articles'); // Changement ici
-const usersRoutes = require('./usersRoutes');
+const usersRoutes = require('./routes/users');
 
 // Initialisation de l'application Express
 const app = express();
