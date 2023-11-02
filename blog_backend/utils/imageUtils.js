@@ -1,9 +1,10 @@
+// imageUtils.js
 const fs = require('fs');
 const path = require('path');
-const pool = require('./database');
+const pool = require('../config/database');
 
 const cleanupUnusedImages = async () => {
-  const directory = path.join(__dirname, 'img');
+  const directory = path.join(__dirname, '..', 'img');
   const filesInDirectory = fs.readdirSync(directory);
   for (const filename of filesInDirectory) {
     const imagePath = path.join(directory, filename);

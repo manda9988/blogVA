@@ -1,5 +1,5 @@
 // deleteUser.js
-const pool = require('../../database');
+const pool = require('../../config/database');
 const path = require('path');
 const fs = require('fs');
 
@@ -40,10 +40,7 @@ async function deleteUser(req, res) {
 
     await cleanupImagesForUser(user.rows[0].id);
 
-    // Marquer l'utilisateur comme inactif plutôt que de le supprimer
-    await pool.query('UPDATE users SET is_active = FALSE WHERE username = $1', [
-      username,
-    ]);
+    await pool.query('DELETE FROM users WHERE username = $1', [username]);
     res.json({ message: 'Utilisateur supprimé avec succès' });
   } catch (error) {
     console.error(error);

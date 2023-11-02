@@ -1,6 +1,6 @@
-// registerUser.js
+registerUser.js;
 const { check, validationResult } = require('express-validator');
-const pool = require('../../database');
+const pool = require('../../config/database');
 const bcrypt = require('bcrypt');
 
 const registerValidators = [
@@ -25,15 +25,6 @@ async function registerUser(req, res) {
     let role = 'user';
     if (email === 'votre_email@example.com' || email === 'manda@gmail.com') {
       role = 'admin';
-    }
-
-    // Vérification si l'utilisateur existait auparavant
-    const existingUser = await pool.query(
-      'SELECT role FROM users WHERE email = $1',
-      [email],
-    );
-    if (existingUser.rows.length > 0) {
-      role = existingUser.rows[0].role;
     }
 
     const result = await pool.query(

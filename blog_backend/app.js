@@ -9,7 +9,7 @@ const express = require('express');
 const cors = require('cors');
 
 // Importation des configurations et routes personnalisées
-const corsConfig = require('./corsConfig');
+const corsConfig = require('./config/corsConfig');
 const articlesRoutes = require('./routes/articles'); // Changement ici
 const usersRoutes = require('./routes/users');
 

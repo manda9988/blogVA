@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../../database');
+const pool = require('../../config/database');
 
 router.get('/countByUser/:userId', async (req, res) => {
   const { userId } = req.params;

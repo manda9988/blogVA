@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
-const pool = require('../../database');
-const authenticateJWT = require('../../authMiddleware');
+const pool = require('../../config/database');
+const authenticateJWT = require('../../middlewares/authMiddleware');
 const fs = require('fs');
 const path = require('path');
 

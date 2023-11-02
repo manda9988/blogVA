@@ -1,7 +1,7 @@
 const express = require('express');
-const pool = require('../../database');
-const authenticateJWT = require('../../authMiddleware');
-const cleanupUnusedImages = require('../../imageUtils');
+const pool = require('../../config/database');
+const authenticateJWT = require('../../middlewares/authMiddleware');
+const cleanupUnusedImages = require('../../utils/imageUtils');
 const fs = require('fs');
 const path = require('path');
 
