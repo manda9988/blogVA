@@ -1,0 +1,7 @@
+# .gitignore
+node_modules/
+*.log
+.env
+.DS_Store
+blog_backend/img/
+import_results_short.txt

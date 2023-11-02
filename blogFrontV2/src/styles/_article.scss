@@ -1,0 +1,92 @@
+// -------------------
+// Article Page
+// -------------------
+.article-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+
+  h2 {
+    font-size: 2.6em;
+    word-wrap: break-word;
+  }
+
+  p {
+    font-size: 0.8em;
+    color: $secondary-color;
+    margin-bottom: 1em;
+    background: rgb(110, 110, 110);
+    display: inline-block;
+    padding: 1px 12px;
+    margin: 6px auto 20px;
+    border-radius: 8px;
+  }
+
+  .article-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .article-image-container {
+      margin-bottom: 1em;
+      height: 300px;
+      display: block; // ou inline-block selon vos besoins
+      // background-color: red;
+
+      &.default-bg {
+        background-color: rgb(31, 31, 31); // Ajout d'un fond noir
+        background-size: cover;
+        background-position: center;
+        color: white; // Couleur du texte (si nécessaire)
+      }
+    }
+
+    .article-image {
+      width: 100%; // Prend toute la largeur du conteneur
+      height: 100%; // Prend toute la hauteur du conteneur
+      object-fit: cover; // Couvre entièrement le conteneur tout en conservant le ratio d'aspect
+      margin: auto;
+      display: block;
+      border-radius: 9px;
+    }
+
+    .article-content {
+      font-size: 1em;
+      line-height: 1.6;
+      color: rgb(45, 45, 45);
+      padding: 20px;
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+      margin-bottom: 30px;
+      border-radius: 9px;
+      background: rgb(213, 213, 213);
+      word-wrap: break-word; // Ajouté pour éviter le débordement du texte
+      // Pas de hauteur fixe pour permettre au conteneur de s'adapter au contenu
+    }
+  }
+}
+// -------------------
+// Responsive Article
+// -------------------
+@media (max-width: 600px) {
+  .article-container {
+    h2 {
+      font-size: 1.8em;
+    }
+    p {
+      font-size: 0.6em;
+    }
+    .article-details {
+      .article-image-container {
+        height: 240px;
+      }
+      .article-content {
+        font-size: 0.7em;
+      }
+    }
+  }
+}

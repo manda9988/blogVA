@@ -1,0 +1,130 @@
+// _account.scss
+
+.account-container {
+  h2 {
+    margin-bottom: 0.5em;
+    text-align: center;
+  }
+
+  .account-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1em; // Espace entre les boutons
+    margin-bottom: 1em; // Espace sous les boutons
+
+    button {
+      display: block;
+      padding: 5px;
+      cursor: pointer;
+      border: none;
+      width: 100px;
+      border-radius: 6px;
+      font-size: 0.6em;
+      background: rgb(90, 90, 90);
+      color: rgb(228, 228, 228);
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: darken(rgb(127, 127, 127), 50%);
+      }
+    }
+  }
+
+  .article-table {
+    width: 60%;
+    margin: 0 auto 2em auto;
+    border-collapse: collapse;
+
+    th,
+    td {
+      border: 1px solid darken($primary-color, 5%);
+      text-align: center;
+      padding: 0.4em 0.6em;
+    }
+
+    th {
+      background-color: lighten($primary-color, 10%);
+      color: #e6e6e6;
+    }
+
+    .col-title,
+    .col-category {
+      padding: 0.4em 1em;
+      word-wrap: break-word;
+      width: 28%;
+    }
+
+    .col-actions {
+      width: 28%;
+    }
+
+    td {
+      &:nth-child(1),
+      &:nth-child(2),
+      &:nth-child(3) {
+        font-weight: 600;
+      }
+
+      button {
+        display: block;
+        margin: 0.4em;
+        padding: 10px;
+        cursor: pointer;
+        border: none;
+        width: 90px;
+        border-radius: 6px;
+        font-size: 0.8em;
+        background: rgb(127, 127, 127);
+        color: rgb(228, 228, 228);
+
+        &.edit-button:hover {
+          background-color: green;
+          color: white;
+        }
+
+        &.delete-button:hover {
+          background-color: red;
+          color: rgb(29, 29, 29);
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  // -------------------
+  // Responsive Account Page
+  // -------------------
+  @media (max-width: 700px) {
+    h2 {
+      font-size: 1.2em;
+    }
+
+    .article-table {
+      width: 90%;
+      table-layout: fixed;
+
+      th,
+      td {
+        font-size: 0.75em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .col-title,
+      .col-category {
+        width: 25%;
+      }
+
+      .col-actions {
+        width: 30%;
+      }
+    }
+  }
+}

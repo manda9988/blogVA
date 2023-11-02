@@ -1,0 +1,25 @@
+{
+  "name": "mon-blog",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^2.4.2",
+    "prettier": "^3.0.3",
+    "prettier-plugin-svelte": "^3.0.3",
+    "sass": "^1.66.1",
+    "svelte": "^4.0.5",
+    "svelte-preprocess": "^5.0.4",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.5"
+  },
+  "dependencies": {
+    "normalize-scss": "^7.0.1",
+    "svelte-spa-router": "^3.3.0"
+  }
+}
