@@ -1,8 +1,0 @@
-{
-  "singleQuote": true,
-  "svelteSortOrder": "options-scripts-styles-markup",
-  "svelteStrictMode": false,
-  "svelteBracketNewLine": true,
-  "svelteAllowShorthand": true,
-  "plugins": ["prettier-plugin-svelte", "prettier-plugin-sql"]
-}
