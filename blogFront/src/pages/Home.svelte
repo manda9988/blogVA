@@ -9,7 +9,7 @@
   // Initialisation d'un tableau vide pour stocker les articles
   let articles = [];
 
-  // Fonction exécutée lors du montage du composant
+  // Fonction exécutée lors du montage du composantt
   onMount(async () => {
     // Récupération des articles depuis le backend
     const res = await fetch('http://localhost:3002/articles');
