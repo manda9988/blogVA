@@ -3,5 +3,5 @@ node_modules/
 *.log
 .env
 .DS_Store
-blogBack/img/  # Mis à jour pour correspondre au nouveau nom du dossier
+blogBack/img/  
 import_results_short.txt
