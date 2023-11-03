@@ -21,7 +21,7 @@ app.use(cors(corsConfig));
 
 // Middlewares pour servir les fichiers statiques et parser les requêtes JSON
 app.use('/img', express.static(path.join(__dirname, 'img')));
-app.use(express.static(path.join(__dirname, '../blogFrontV2/dist')));
+app.use(express.static(path.join(__dirname, '../blogFront/dist')));
 app.use(express.json({ limit: '50mb' }));
 
 // Routes personnalisées
@@ -30,7 +30,7 @@ app.use('/users', usersRoutes);
 
 // Route par défaut pour servir le frontend
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../blogFrontV2/dist/index.html'));
+  res.sendFile(path.join(__dirname, '../blogFront/dist/index.html'));
 });
 
 // Démarrage du serveur
