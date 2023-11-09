@@ -5,22 +5,33 @@
   import { push } from 'svelte-spa-router';
 
   let inactivityTimer;
-  const LOGOUT_FLAG = 'autoLoggedOut'; // <-- Clé pour stocker l'indicateur dans le localStorage
+  const LOGOUT_FLAG = 'autoLoggedOut';
 
   function resetInactivityTimer() {
-    if (localStorage.getItem(LOGOUT_FLAG)) return; // <-- Si l'indicateur est présent, ne pas réinitialiser le timer
+    // Ajout d'une vérification pour s'assurer que l'utilisateur est connecté
+    if (!localStorage.getItem('token')) {
+      return; // Si aucun token n'est présent, l'utilisateur n'est pas connecté
+    }
+
+    if (localStorage.getItem(LOGOUT_FLAG)) return;
+
     clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(logoutDueToInactivity, 60000); // 10min
+    inactivityTimer = setTimeout(logoutDueToInactivity, 600000); // Réglé sur 1min (60 000 ms)
   }
 
   function logoutDueToInactivity() {
-    alert("Vous avez été déconnecté en raison d'une inactivité de 10 minutes.");
-    localStorage.removeItem('username');
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('role');
-    localStorage.setItem(LOGOUT_FLAG, 'true'); // <-- Stocker l'indicateur dans le localStorage
-    push('/login');
+    // Encore une fois, vérifier si l'utilisateur est connecté avant de déconnecter
+    if (localStorage.getItem('token')) {
+      alert(
+        "Vous avez été déconnecté en raison d'une inactivité de 1 minute.",
+      );
+      localStorage.removeItem('username');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('role');
+      localStorage.setItem(LOGOUT_FLAG, 'true');
+      push('/login');
+    }
   }
 
   onMount(() => {
