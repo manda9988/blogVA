@@ -1,3 +1,4 @@
+// createArticle.js
 const express = require('express');
 const multer = require('multer');
 const pool = require('../../config/database');

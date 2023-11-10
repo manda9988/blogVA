@@ -1,41 +1,38 @@
 <!-- Publish.svelte -->
-
 <script>
-  // Importation des fonctions nécessaires de Svelte et svelte-spa-router
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
-  import AutoLogout from '../lib/AutoLogout.svelte'; // <-- Ajout de l'importation
+  import AutoLogout from '../lib/AutoLogout.svelte';
 
-  // Initialisation des variables pour le titre, le contenu, la catégorie et le fichier de l'article
   let title = '';
   let content = '';
   let category = '';
   let file;
 
-  // Vérification lors du montage du composant si l'utilisateur est connecté
   onMount(async () => {
     if (!localStorage.getItem('username')) {
       alert('Veuillez vous connecter pour accéder à cette page.');
       push('/login');
     } else {
       const userId = localStorage.getItem('userId');
-      const role = localStorage.getItem('role'); // Récupérer le rôle de l'utilisateur
+      const role = localStorage.getItem('role');
 
-      if (role !== 'admin') {
-        // Si l'utilisateur n'est pas un administrateur
-        const response = await fetch(
-          `http://localhost:3002/articles/countByUser/${userId}`,
-        );
-        const data = await response.json();
-        if (data.count >= 1) {
-          alert('Vous êtes limité à un seul article.');
-          push('/'); // Redirige vers la page d'accueil
-        }
+      // Modification: Ajout de la logique pour vérifier le nombre d'articles pour les administrateurs
+      const response = await fetch(
+        `http://localhost:3002/articles/countByUser/${userId}`,
+      );
+      const data = await response.json();
+
+      // Modification: Fixe la limite à 1 pour les utilisateurs réguliers et à 2 pour les administrateurs
+      const articleLimit = role === 'admin' ? 2 : 1;
+
+      if (data.count >= articleLimit) {
+        alert(`Vous êtes limité à ${articleLimit} articles.`);
+        push('/'); // Redirige vers la page d'accueil si la limite est atteinte
       }
     }
   });
 
-  // Fonction pour gérer la publication de l'article
   function handlePublish() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -71,7 +68,6 @@
     }
   }
 
-  // Fonction pour gérer le changement de fichier
   function handleFileChange(event) {
     file = event.target.files[0];
   }
