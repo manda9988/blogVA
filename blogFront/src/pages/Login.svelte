@@ -1,11 +1,8 @@
 <!-- Login.svelte -->
-
 <script>
-  // Importation des fonctions nécessaires de Svelte et svelte-spa-router
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
 
-  // Initialisation des variables pour l'email et le mot de passe
   let email = '';
   let password = '';
   const API_URL = 'http://localhost:3002';
@@ -58,13 +55,10 @@
       }
 
       localStorage.setItem('username', data.user.username);
-      localStorage.setItem('token', data.token); // Stockage du token
+      localStorage.setItem('token', data.token);
       localStorage.setItem('userId', data.user.id);
-      localStorage.setItem('role', data.user.role); // Stockage du rôle de l'utilisateur
-
+      localStorage.setItem('role', data.user.role);
       localStorage.removeItem(LOGOUT_FLAG); // <-- Ajout de cette ligne pour réinitialiser l'indicateur
-
-      console.log('Token stocké:', localStorage.getItem('token'));
       push('/account');
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
@@ -72,8 +66,28 @@
     }
   }
 
-  // Fonction pour naviguer vers la page d'inscription
-  function goToRegister() {
+  // Modification: Fonction pour empêcher la navigation vers 'register' si le nombre maximal d'utilisateurs est atteint
+  // Fonction modifiée pour ajouter des logs de débogage
+  async function goToRegister() {
+    console.log("Tentative de récupération du nombre d'utilisateurs"); // Nouveau log
+    const response = await fetch(`${API_URL}/users/count`);
+
+    if (!response.ok) {
+      console.error('Erreur lors de la requête au serveur:', response); // Log d'erreur
+      alert("Erreur lors de la récupération du nombre d'utilisateurs.");
+      return;
+    }
+
+    const data = await response.json();
+    console.log("Nombre d'utilisateurs actuel:", data.count); // Log du résultat
+
+    if (data.count >= 4) {
+      alert(
+        "La limite de 4 utilisateurs a été atteinte. L'inscription est actuellement désactivée.",
+      );
+      return;
+    }
+
     push('/register');
   }
 </script>
@@ -103,7 +117,3 @@
     >Pas encore inscrit ? S'inscrire</a
   >
 </div>
-
-<!-- Ce fichier est le composant de la page de connexion. Il contient un formulaire permettant à l'utilisateur de saisir son adresse e-mail et son mot de passe pour se connecter. Une fois le formulaire soumis, les informations sont envoyées au backend pour vérification et, si elles sont correctes, l'utilisateur est connecté.
-
- -->

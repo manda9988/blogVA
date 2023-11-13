@@ -1,4 +1,4 @@
-registerUser.js;
+// registerUser.js;
 const { check, validationResult } = require('express-validator');
 const pool = require('../../config/database');
 const bcrypt = require('bcrypt');
@@ -15,6 +15,16 @@ async function registerUser(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
+  }
+
+  // Modification: Vérifier le nombre d'utilisateurs existants
+  const userCountResult = await pool.query('SELECT COUNT(*) FROM users');
+  const userCount = parseInt(userCountResult.rows[0].count);
+
+  if (userCount >= 4) {
+    return res
+      .status(400)
+      .json({ error: 'La limite de 4 utilisateurs a été atteinte.' });
   }
 
   try {
