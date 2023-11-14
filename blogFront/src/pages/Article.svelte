@@ -77,12 +77,8 @@
   <div>Loading...</div>
 {:else}
   <div class="article-container">
-    <h2>{article?.title}</h2>
-    <p>{article?.username}</p>
-    <p>{article?.category}</p>
-    <p>{article ? formatDate(article.published_date) : ''}</p>
-
     <div class="article-details">
+      <h2>{article?.title}</h2>
       {#if article?.imageurl}
         <div class="article-image-container">
           <img
@@ -97,6 +93,13 @@
       <div class="article-content">
         {article?.content}
       </div>
+    </div>
+    <!-- Informations de publication en bas de page -->
+    <div class="article-footer">
+      Publié par <span class="highlighted">{article?.username}</span>, le
+      <span class="highlightedDate"
+        >{article ? formatDate(article.published_date) : ''}</span
+      >. Catégorie: <span class="highlighted">{article?.category}</span>
     </div>
   </div>
 {/if}

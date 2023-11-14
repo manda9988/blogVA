@@ -4,7 +4,7 @@ nav ul {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: lighten($primary-color, 6%);
+  background: lighten($primary-color, 6%);
   height: 38px;
   list-style: none;
   text-transform: uppercase;
