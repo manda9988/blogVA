@@ -7,6 +7,6 @@
 
 <header>
   <a href="/">
-    <h1>BLOGG</h1>
+    <h1>gBlog</h1>
   </a>
 </header>

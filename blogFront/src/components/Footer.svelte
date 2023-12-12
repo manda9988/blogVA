@@ -14,9 +14,9 @@
     <!-- Icônes et liens vers des profils de médias sociaux et d'autres plateformes -->
     <div class="icons">
       <!-- Lien vers l'adresse e-mail -->
-      <a href="mailto:your.email@example.com">
+      <!-- <a href="mailto:your.email@example.com">
         <i class="fas fa-envelope"></i>
-      </a>
+      </a> -->
 
       <!-- Lien vers le profil GitHub -->
       <a href="https://github.com/yourusername">
@@ -24,9 +24,9 @@
       </a>
 
       <!-- Lien vers le profil LinkedIn -->
-      <a href="https://linkedin.com/in/your-linkedin-id">
+      <!-- <a href="https://linkedin.com/in/your-linkedin-id">
         <i class="fab fa-linkedin"></i>
-      </a>
+      </a> -->
 
       <!-- Lien vers le portfolio -->
       <a href="https://your-portfolio-link.com">

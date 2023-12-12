@@ -2,7 +2,7 @@
 // Article Page
 // -------------------
 .article-container {
-  width: 100%;
+  max-width: 1200px; /* Largeur maximale pour grand écran */
   margin: 0 auto;
   text-align: center;
   // background: lightgreen;
@@ -11,14 +11,17 @@
     font-size: 1.7em;
     word-wrap: break-word;
     text-transform: uppercase;
-    background: rgb(218, 218, 218);
-    color: rgb(60, 60, 60);
-    margin-bottom: 0.2em;
     display: inline-block;
     padding: 8px;
     line-height: 1;
     width: 100%;
     font-weight: 900;
+  }
+
+  h2,
+  .article-content {
+    background: rgb(29, 29, 29);
+    color: rgb(215, 215, 215);
   }
 
   .article-details {
@@ -29,40 +32,30 @@
     margin: 0 auto;
 
     .article-image-container {
-      margin-bottom: 0.8em;
-
-      &.default-bg {
-        background-color: rgb(31, 31, 31); // Ajout d'un fond noir
-        background-size: cover;
-        background-position: center;
-        color: rgb(225, 225, 225); // Couleur du texte (si nécessaire)
-      }
+      height: 300px; /* Fixe la hauteur du conteneur de l'image */
+      overflow: hidden; /* Cache les parties de l'image qui dépassent */
     }
 
     .article-image {
-      width: 100%; // Prend toute la largeur du conteneur
-      object-fit: cover;
-      // border-radius: 4px;
+      width: 100%; /* Assurez-vous que la largeur ne dépasse pas le conteneur */
     }
 
     .article-content {
       font-size: 1em;
       line-height: 1.6;
-      background: rgb(218, 218, 218);
-      color: rgb(60, 60, 60);
       padding: 10px;
       width: 100%;
       text-align: left;
-      margin-bottom: 1em;
+
       word-wrap: break-word; // Ajouté pour éviter le débordement du texte
       font-weight: 500;
     }
   }
   .article-footer {
     text-align: center;
-    margin-top: 1em;
+    // margin-top: 1em;
     font-size: 0.8em;
-    background: rgb(195, 255, 195);
+    background: rgba(189, 189, 189, 0.862);
     padding: 12px;
     width: 85%;
     margin: 0 auto;
@@ -70,10 +63,6 @@
   .highlighted {
     text-transform: uppercase;
     font-weight: 800;
-  }
-  .highlightedDate {
-    text-transform: uppercase;
-    font-weight: 700;
   }
 }
 // -------------------

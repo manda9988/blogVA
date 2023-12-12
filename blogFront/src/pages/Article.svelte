@@ -72,34 +72,25 @@
 <AutoLogout />
 <!-- <-- Ajout du composant AutoLogout -->
 
-<!-- Affichage de l'article -->
-{#if isLoading}
-  <div>Loading...</div>
-{:else}
-  <div class="article-container">
-    <div class="article-details">
-      <h2>{article?.title}</h2>
-      {#if article?.imageurl}
-        <div class="article-image-container">
-          <img
-            src={`http://localhost:3002${article?.imageurl}`}
-            alt={article?.title}
-            class="article-image"
-          />
-        </div>
-      {:else}
-        <div class="article-image-container default-bg"></div>
-      {/if}
-      <div class="article-content">
-        {article?.content}
-      </div>
+<div class="article-container">
+  <div class="article-details">
+    <h2>{article?.title}</h2>
+    <div class="article-image-container">
+      <img
+        src={`http://localhost:3002${article?.imageurl}`}
+        alt={article?.title}
+        class="article-image"
+      />
     </div>
-    <!-- Informations de publication en bas de page -->
-    <div class="article-footer">
-      Publié par <span class="highlighted">{article?.username}</span>, le
-      <span class="highlightedDate"
-        >{article ? formatDate(article.published_date) : ''}</span
-      >. Catégorie: <span class="highlighted">{article?.category}</span>
+    <div class="article-content">
+      {article?.content}
     </div>
   </div>
-{/if}
+  <!-- Informations de publication en bas de page -->
+  <div class="article-footer">
+    Publié par <span class="highlighted">{article?.username}</span>, le
+    <span class="highlighted"
+      >{article ? formatDate(article.published_date) : ''}</span
+    >. Catégorie: <span class="highlighted">{article?.category}</span>
+  </div>
+</div>
