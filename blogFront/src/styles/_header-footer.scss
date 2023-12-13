@@ -30,6 +30,15 @@ footer {
   margin-top: 20px;
   font-size: 1em;
 
+  ::selection {
+    background-color: $secondary-color;
+    color: $primary-color;
+  }
+  ::-moz-selection {
+    background-color: $secondary-color;
+    color: $primary-color;
+  }
+
   .footer-container {
     display: flex;
     justify-content: space-between;

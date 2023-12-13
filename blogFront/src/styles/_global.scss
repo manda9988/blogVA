@@ -11,12 +11,12 @@
 // Styles globaux de sélection
 // -------------------
 ::selection {
-  background-color: $secondary-color;
-  color: $primary-color;
+  color: $secondary-color;
+  background-color: $primary-color;
 }
 ::-moz-selection {
-  background-color: $secondary-color;
-  color: $primary-color;
+  color: $secondary-color;
+  background-color: $primary-color;
 }
 
 // -------------------
