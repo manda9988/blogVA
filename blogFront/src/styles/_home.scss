@@ -1,13 +1,10 @@
 // _home.scss
 
 section {
-  padding: 1em;
+  // padding: 1em;
   text-align: center;
-
-  h2 {
-    color: $primary-color;
-    margin-bottom: 20px;
-  }
+  background: lightgreen;
+  margin-top: 8px;
 }
 
 .article-grid {
