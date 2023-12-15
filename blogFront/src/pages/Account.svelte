@@ -22,7 +22,7 @@
       return;
     }
 
-    const response = await fetch(`${API_URL}/verifyToken`, {
+    const response = await fetch(`${API_URL}/users/verifyToken`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
