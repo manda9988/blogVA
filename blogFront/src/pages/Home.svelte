@@ -91,7 +91,9 @@
             <div class="image-container default-bg"></div>
           {/if}
           <div class="title">{article.title}</div>
-          <div class="author">Par {article.username}</div>
+          <div class="author">
+            Par <span class="username">{article.username}</span>
+          </div>
         </div>
       </div>
     {/each}
