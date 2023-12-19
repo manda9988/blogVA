@@ -8,7 +8,7 @@ nav ul {
   height: 38px;
   list-style: none;
   text-transform: uppercase;
-  font-weight: 100;
+  font-weight: 200;
   // margin-bottom: 2px;
 
   li {
@@ -28,12 +28,12 @@ nav ul {
 
       // Style pour le lien actif
       &.active {
-        font-weight: 500;
+        font-weight: 600;
       }
 
       // Effet de survol
       &:hover {
-        font-weight: 500;
+        font-weight: 600;
       }
     }
   }
