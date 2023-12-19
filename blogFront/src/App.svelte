@@ -11,7 +11,7 @@
   import Footer from './components/Footer.svelte'; // Composant de pied de page
 
   // Code de débogage pour vérifier que le composant App est chargé
-  console.log('Debug: App component loaded');
+  // console.log('Debug: App component loaded');
 </script>
 
 <!-- Structure principale de l'application -->

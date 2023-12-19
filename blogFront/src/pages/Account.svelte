@@ -89,7 +89,7 @@
 
   // MODIFICATION: Fonction pour se déconnecter sans confirmation
   function logoutWithoutConfirmation() {
-    console.log('Déconnexion de l’utilisateur'); // Log pour la confirmation de la déconnexion
+    // console.log('Déconnexion de l’utilisateur'); // Log pour la confirmation de la déconnexion
     localStorage.removeItem('username');
     localStorage.removeItem('token');
     localStorage.removeItem('userId');

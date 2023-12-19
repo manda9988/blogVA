@@ -62,7 +62,7 @@
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log('Article publié:', data);
+          // console.log('Article publié:', data);
           window.location.href = '/';
         });
     }

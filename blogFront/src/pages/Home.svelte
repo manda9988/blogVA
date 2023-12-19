@@ -12,25 +12,25 @@
     try {
       const resUsers = await fetch(`${API_URL}/users`);
       users = await resUsers.json();
-      console.log('Tous les utilisateurs:', users); // Débogage: Afficher tous les utilisateurs
+      // console.log('Tous les utilisateurs:', users); // Débogage: Afficher tous les utilisateurs
 
       const resArticles = await fetch(`${API_URL}/articles`);
       const allArticles = await resArticles.json();
-      console.log('Tous les articles:', allArticles); // Débogage: Afficher tous les articles
+      // console.log('Tous les articles:', allArticles); // Débogage: Afficher tous les articles
 
       const userRole = localStorage.getItem('role');
-      console.log('Rôle de l’utilisateur:', userRole); // Débogage: Afficher le rôle de l'utilisateur
+      // console.log('Rôle de l’utilisateur:', userRole); // Débogage: Afficher le rôle de l'utilisateur
 
       if (!userRole || userRole === 'visitor') {
         // Visiteur non connecté : Ne voir que les articles de l'admin
         const adminUser = users.find((user) => user.role === 'admin');
-        console.log('Utilisateur admin:', adminUser); // Débogage: Afficher l'utilisateur admin
+        // console.log('Utilisateur admin:', adminUser); // Débogage: Afficher l'utilisateur admin
 
         if (adminUser) {
           articles = allArticles.filter(
             (article) => article.user_id === adminUser.id,
           );
-          console.log('Articles de l’admin:', articles); // Débogage: Afficher les articles de l'admin
+          // console.log('Articles de l’admin:', articles); // Débogage: Afficher les articles de l'admin
         } else {
           console.error('Aucun utilisateur admin trouvé');
         }
@@ -45,7 +45,7 @@
             (article) =>
               article.user_id === userId || article.user_id === adminUser.id,
           );
-          console.log('Articles visibles par l’utilisateur:', articles); // Débogage: Afficher les articles visibles par l'utilisateur
+          // console.log('Articles visibles par l’utilisateur:', articles); // Débogage: Afficher les articles visibles par l'utilisateur
         } else {
           console.error('Aucun utilisateur admin trouvé');
         }

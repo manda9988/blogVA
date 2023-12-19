@@ -22,6 +22,7 @@
     imageurl: string;
     username: string;
     published_date: string;
+    modified_date?: string;
   }
 
   // Initialisation des variables pour l'article et son chargement
@@ -31,7 +32,7 @@
 
   // Fonction exécutée lors du montage du composant
   onMount(() => {
-    console.log('Article component mounted');
+    // console.log('Article component mounted');
 
     // MODIFICATION: Utilisez directement la prop params pour obtenir l'ID
     if (params && params.id) {
@@ -52,6 +53,10 @@
       article = await res.json();
       console.log("Données de l'article :", article);
       console.log("URL de l'image :", article?.imageurl);
+
+      // Ajout des déclarations console.log pour les dates
+      console.log('Date de publication :', article?.published_date);
+      console.log('Date de modification :', article?.modified_date);
     } else {
       console.error('Failed to load article');
       isLoading = false;
@@ -63,7 +68,7 @@
     const date = new Date(dateString);
     return date.toLocaleDateString('fr-FR', {
       year: 'numeric',
-      month: 'long',
+      month: 'numeric',
       day: 'numeric',
     });
   }
@@ -91,6 +96,11 @@
     Publié par <span class="highlighted">{article?.username}</span>, le
     <span class="highlighted"
       >{article ? formatDate(article.published_date) : ''}</span
-    >. Catégorie: <span class="highlighted">{article?.category}</span>
+    >.
+    {#if article?.modified_date && article.modified_date !== article.published_date}
+      Màj le <span class="highlighted">{formatDate(article.modified_date)}</span
+      >.
+    {/if}
+    Catégorie: <span class="highlighted">{article?.category}</span>
   </div>
 </div>

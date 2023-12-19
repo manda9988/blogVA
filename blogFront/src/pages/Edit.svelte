@@ -35,8 +35,8 @@
 
   // Fonction exécutée lors du montage du composant
   onMount(() => {
-    console.log('Edit Component Mounted');
-    console.log('Received Params:', params); // <-- MODIFICATION: Accès direct
+    // console.log('Edit Component Mounted');
+    // console.log('Received Params:', params); // <-- MODIFICATION: Accès direct
 
     if (params && params.id) {
       id = params.id;
@@ -52,11 +52,11 @@
   // Fonction pour charger les données de l'article
   async function loadData() {
     try {
-      console.log(`Loading data for article ID: ${id}`);
+      // console.log(`Loading data for article ID: ${id}`);
       const res = await fetch(`http://localhost:3002/articles/${id}`);
       if (!res.ok) throw new Error('Failed to load article');
       article = await res.json();
-      console.log('Article Data Loaded:', article);
+      // console.log('Article Data Loaded:', article);
     } catch (error) {
       console.error('Error Loading Data:', error);
       isLoading = false;
@@ -76,12 +76,12 @@
     formData.append('category', article.category);
     if (file) formData.append('image', file); // Ajoutez le fichier image seulement s'il est présent
 
-    console.log('Données envoyées:', {
-      title: article.title,
-      content: article.content,
-      category: article.category,
-      image: file,
-    });
+    // console.log('Données envoyées:', {
+    //   title: article.title,
+    //   content: article.content,
+    //   category: article.category,
+    //   image: file,
+    // });
     const token = localStorage.getItem('token'); // Récupérez le token du localStorage
 
     fetch(`http://localhost:3002/articles/${id}`, {
@@ -93,7 +93,7 @@
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log('Success:', data);
+        // console.log('Success:', data);
         window.location.href = '/';
       })
       .catch((error) => {

@@ -69,7 +69,7 @@
   // Modification: Fonction pour empêcher la navigation vers 'register' si le nombre maximal d'utilisateurs est atteint
   // Fonction modifiée pour ajouter des logs de débogage
   async function goToRegister() {
-    console.log("Tentative de récupération du nombre d'utilisateurs"); // Nouveau log
+    // console.log("Tentative de récupération du nombre d'utilisateurs"); // Nouveau log
     const response = await fetch(`${API_URL}/users/count`);
 
     if (!response.ok) {
@@ -79,7 +79,7 @@
     }
 
     const data = await response.json();
-    console.log("Nombre d'utilisateurs actuel:", data.count); // Log du résultat
+    // console.log("Nombre d'utilisateurs actuel:", data.count); // Log du résultat
 
     if (data.count >= 4) {
       alert(

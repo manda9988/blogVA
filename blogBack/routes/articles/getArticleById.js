@@ -5,7 +5,7 @@ const pool = require('../../config/database');
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const query = `
-        SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, articles.published_date, users.username, users.id AS user_id  
+        SELECT articles.id, articles.title, articles.content, articles.category, articles.imageurl, articles.published_date, articles.modified_date, users.username, users.id AS user_id  
         FROM articles 
         LEFT JOIN users ON articles.user_id = users.id
         WHERE articles.id = $1

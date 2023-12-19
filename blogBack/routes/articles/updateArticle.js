@@ -39,9 +39,16 @@ router.put(
         newImageurl = oldImageurl;
       }
 
-      const values = [title, content, category, newImageurl, id];
+      // Ajout de la date de modification actuelle
+      const modifiedDate = new Date(); // Nouvelle ligne ajoutée
+
+      // Mise à jour des valeurs, y compris la date de modification
+      const values = [title, content, category, newImageurl, modifiedDate, id]; // Modification ici pour inclure modifiedDate
+
+      // Mise à jour de la requête pour inclure modified_date
       const query =
-        'UPDATE articles SET title = $1, content = $2, category = $3, imageurl = $4 WHERE id = $5 RETURNING *';
+        'UPDATE articles SET title = $1, content = $2, category = $3, imageurl = $4, modified_date = $5 WHERE id = $6 RETURNING *'; // Modification ici pour inclure modified_date
+
       const result = await pool.query(query, values);
 
       if (result.rows.length > 0) {
