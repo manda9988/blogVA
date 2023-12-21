@@ -16,15 +16,13 @@
     if (localStorage.getItem(LOGOUT_FLAG)) return;
 
     clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(logoutDueToInactivity, 600000); // Réglé sur 1min (60 000 ms)
+    inactivityTimer = setTimeout(logoutDueToInactivity, 6000000); // Réglé sur 1min (60 000 ms)
   }
 
   function logoutDueToInactivity() {
     // Encore une fois, vérifier si l'utilisateur est connecté avant de déconnecter
     if (localStorage.getItem('token')) {
-      alert(
-        "Vous avez été déconnecté en raison d'une inactivité de 1 minute.",
-      );
+      alert("Vous avez été déconnecté en raison d'une inactivité de 1 minute.");
       localStorage.removeItem('username');
       localStorage.removeItem('token');
       localStorage.removeItem('userId');

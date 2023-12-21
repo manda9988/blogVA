@@ -92,7 +92,7 @@
           {/if}
           <div class="title">{article.title}</div>
           <div class="author">
-            Par <span class="username">{article.username}</span>
+            <span class="username">{article.username}</span>
           </div>
         </div>
       </div>
