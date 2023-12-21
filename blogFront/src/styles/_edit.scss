@@ -7,13 +7,13 @@
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: 55%;
-  margin: 0 auto;
+  margin: 20px auto;
 
   // Style pour l'image de l'article dans la page de modification
   .article-image {
-    max-width: 100px; // Ou la taille que vous préférez
-    max-height: 100px; // Ou la taille que vous préférez
-    margin-left: 10px; // Ou la marge que vous préférez
+    max-width: 100px;
+    max-height: 100px;
+    margin-left: 10px;
   }
 
   h2 {
