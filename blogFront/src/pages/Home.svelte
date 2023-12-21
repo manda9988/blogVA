@@ -6,50 +6,11 @@
 
   let articles = [];
   const API_URL = 'http://localhost:3002';
-  let users = []; // Définir users dans la portée globale du script
 
   onMount(async () => {
     try {
-      const resUsers = await fetch(`${API_URL}/users`);
-      users = await resUsers.json();
-      // console.log('Tous les utilisateurs:', users); // Débogage: Afficher tous les utilisateurs
-
       const resArticles = await fetch(`${API_URL}/articles`);
-      const allArticles = await resArticles.json();
-      // console.log('Tous les articles:', allArticles); // Débogage: Afficher tous les articles
-
-      const userRole = localStorage.getItem('role');
-      // console.log('Rôle de l’utilisateur:', userRole); // Débogage: Afficher le rôle de l'utilisateur
-
-      if (!userRole || userRole === 'visitor') {
-        // Visiteur non connecté : Ne voir que les articles de l'admin
-        const adminUser = users.find((user) => user.role === 'admin');
-        // console.log('Utilisateur admin:', adminUser); // Débogage: Afficher l'utilisateur admin
-
-        if (adminUser) {
-          articles = allArticles.filter(
-            (article) => article.user_id === adminUser.id,
-          );
-          // console.log('Articles de l’admin:', articles); // Débogage: Afficher les articles de l'admin
-        } else {
-          console.error('Aucun utilisateur admin trouvé');
-        }
-      } else if (userRole === 'admin') {
-        articles = allArticles;
-      } else {
-        const userId = parseInt(localStorage.getItem('userId'));
-        // Utilise la variable users récupérée précédemment
-        const adminUser = users.find((user) => user.role === 'admin');
-        if (adminUser) {
-          articles = allArticles.filter(
-            (article) =>
-              article.user_id === userId || article.user_id === adminUser.id,
-          );
-          // console.log('Articles visibles par l’utilisateur:', articles); // Débogage: Afficher les articles visibles par l'utilisateur
-        } else {
-          console.error('Aucun utilisateur admin trouvé');
-        }
-      }
+      articles = await resArticles.json(); // Affecte tous les articles à la variable 'articles'
     } catch (error) {
       console.error('Erreur lors de la récupération des données:', error);
     }

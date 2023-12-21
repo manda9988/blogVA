@@ -21,10 +21,10 @@ async function registerUser(req, res) {
   const userCountResult = await pool.query('SELECT COUNT(*) FROM users');
   const userCount = parseInt(userCountResult.rows[0].count);
 
-  if (userCount >= 4) {
+  if (userCount >= 3) {
     return res
       .status(400)
-      .json({ error: 'La limite de 4 utilisateurs a été atteinte.' });
+      .json({ error: 'La limite de 3 utilisateurs a été atteinte.' });
   }
 
   try {

@@ -81,9 +81,9 @@
     const data = await response.json();
     // console.log("Nombre d'utilisateurs actuel:", data.count); // Log du résultat
 
-    if (data.count >= 4) {
+    if (data.count >= 3) {
       alert(
-        "La limite de 4 utilisateurs a été atteinte. L'inscription est actuellement désactivée.",
+        "La limite de 3 utilisateurs a été atteinte. L'inscription est actuellement désactivée.",
       );
       return;
     }
