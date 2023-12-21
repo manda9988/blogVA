@@ -89,11 +89,9 @@
 
   // MODIFICATION: Fonction pour se déconnecter sans confirmation
   function logoutWithoutConfirmation() {
-    // console.log('Déconnexion de l’utilisateur'); // Log pour la confirmation de la déconnexion
     localStorage.removeItem('username');
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
-    // MODIFICATION: Assurez-vous d'effacer le rôle de l'utilisateur du localStorage
     localStorage.removeItem('role');
     push('/');
   }
@@ -118,13 +116,11 @@
 </script>
 
 <AutoLogout />
-<!-- <-- Ajout du composant AutoLogout -->
 
 <!-- Section du compte utilisateur -->
 <div class="account-container">
   <h2>Bonjour {username}✌️😊</h2>
 
-  <!-- Tableau des articles de l'utilisateur -->
   <table class="article-table">
     <thead>
       <tr>
@@ -157,7 +153,7 @@
       {/each}
     </tbody>
   </table>
-  <!-- Boutons de déconnexion et de désinscription -->
+
   <div class="account-buttons">
     <button on:click={handleLogout}>Déconnexion</button>
     <button on:click={handleUnsubscribe}>Se désinscrire</button>

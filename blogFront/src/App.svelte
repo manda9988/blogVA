@@ -9,9 +9,6 @@
   import Header from './components/Header.svelte'; // Composant d'en-tête
   import Navbar from './components/Navbar.svelte'; // Composant de barre de navigation
   import Footer from './components/Footer.svelte'; // Composant de pied de page
-
-  // Code de débogage pour vérifier que le composant App est chargé
-  // console.log('Debug: App component loaded');
 </script>
 
 <!-- Structure principale de l'application -->

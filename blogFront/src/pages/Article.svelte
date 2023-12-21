@@ -11,7 +11,7 @@
 
   // Importation des fonctions nécessaires de Svelte
   import { onMount } from 'svelte';
-  import AutoLogout from '../lib/AutoLogout.svelte'; // <-- Ajout de l'importation
+  import AutoLogout from '../lib/AutoLogout.svelte'; 
 
   // Définition de l'interface pour un article
   interface Article {
@@ -32,8 +32,6 @@
 
   // Fonction exécutée lors du montage du composant
   onMount(() => {
-    // console.log('Article component mounted');
-
     // MODIFICATION: Utilisez directement la prop params pour obtenir l'ID
     if (params && params.id) {
       id = params.id;
@@ -51,12 +49,6 @@
     const res = await fetch(`http://localhost:3002/articles/${id}`);
     if (res.ok) {
       article = await res.json();
-      console.log("Données de l'article :", article);
-      console.log("URL de l'image :", article?.imageurl);
-
-      // Ajout des déclarations console.log pour les dates
-      console.log('Date de publication :', article?.published_date);
-      console.log('Date de modification :', article?.modified_date);
     } else {
       console.error('Failed to load article');
       isLoading = false;
@@ -75,7 +67,6 @@
 </script>
 
 <AutoLogout />
-<!-- <-- Ajout du composant AutoLogout -->
 
 <div class="article-container">
   <div class="article-details">
@@ -91,7 +82,7 @@
       {article?.content}
     </div>
   </div>
-  <!-- Informations de publication en bas de page -->
+
   <div class="article-footer">
     Publié par <span class="highlighted">{article?.username}</span>, le
     <span class="highlighted"
