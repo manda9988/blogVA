@@ -2,7 +2,6 @@
 
 <script>
   // Importation des fonctions nécessaires de Svelte et svelte-spa-router
-  import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
 
   // Initialisation des variables pour le nom d'utilisateur, l'email, le mot de passe et la confirmation du mot de passe

@@ -73,7 +73,7 @@
 </script>
 
 <AutoLogout />
-<!-- <-- Ajout du composant AutoLogout -->
+
 
 <!-- Section pour la publication d'un nouvel article -->
 <div class="publish-container">
