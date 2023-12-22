@@ -10,7 +10,7 @@
   let password = '';
   let confirmPassword = '';
 
-  const API_URL = 'http://localhost:3002';
+  import { API_URL } from '../config/config.js';
 
   // Fonction pour gérer l'inscription
   async function handleRegister() {

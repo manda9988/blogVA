@@ -3,6 +3,7 @@
 <script lang="ts">
   // Importation des fonctions nécessaires de Svelte
   import { onMount } from 'svelte';
+  import { API_URL } from '../config/config.js';
 
   // Définition de l'interface pour un article
   interface Article {
@@ -49,7 +50,7 @@
   // Fonction pour charger les données de l'article
   async function loadData() {
     try {
-      const res = await fetch(`http://localhost:3002/articles/${id}`);
+      const res = await fetch(`${API_URL}/articles/${id}`); // Modifié
       if (!res.ok) throw new Error('Failed to load article');
       article = await res.json();
     } catch (error) {
@@ -73,7 +74,7 @@
 
     const token = localStorage.getItem('token'); // Récupérez le token du localStorage
 
-    fetch(`http://localhost:3002/articles/${id}`, {
+    fetch(`${API_URL}/articles/${id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`, // Ajoutez le token à l'en-tête de la requête
@@ -143,7 +144,7 @@
           <img
             src={article.imageurl.startsWith('data:')
               ? article.imageurl
-              : `http://localhost:3002${article.imageurl}`}
+              : `${API_URL}${article.imageurl}`}
             alt="Illustration de l'article"
             class="article-image"
           />

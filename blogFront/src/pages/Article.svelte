@@ -11,7 +11,8 @@
 
   // Importation des fonctions nécessaires de Svelte
   import { onMount } from 'svelte';
-  import AutoLogout from '../lib/AutoLogout.svelte'; 
+  import AutoLogout from '../lib/AutoLogout.svelte';
+  import { API_URL } from '../config/config.js';
 
   // Définition de l'interface pour un article
   interface Article {
@@ -46,7 +47,7 @@
 
   // Fonction pour charger les données de l'article
   async function loadData() {
-    const res = await fetch(`http://localhost:3002/articles/${id}`);
+    const res = await fetch(`${API_URL}/articles/${id}`); // Utilisation de API_URL
     if (res.ok) {
       article = await res.json();
     } else {
@@ -73,7 +74,7 @@
     <h2>{article?.title}</h2>
     <div class="article-image-container">
       <img
-        src={`http://localhost:3002${article?.imageurl}`}
+        src={`${API_URL}${article?.imageurl}`}
         alt={article?.title}
         class="article-image"
       />

@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
   import AutoLogout from '../lib/AutoLogout.svelte';
+  import { API_URL } from '../config/config.js';
 
   let title = '';
   let content = '';
@@ -18,9 +19,7 @@
       const role = localStorage.getItem('role');
 
       // Modification: Ajout de la logique pour vérifier le nombre d'articles pour les administrateurs
-      const response = await fetch(
-        `http://localhost:3002/articles/countByUser/${userId}`,
-      );
+      const response = await fetch(`${API_URL}/articles/countByUser/${userId}`);
       const data = await response.json();
 
       // Modification: Fixe la limite à 1 pour les utilisateurs réguliers et à 2 pour les administrateurs
@@ -53,7 +52,7 @@
       formData.append('category', category);
       formData.append('image', file);
 
-      fetch('http://localhost:3002/articles', {
+      fetch(`${API_URL}/articles`, {
         method: 'POST',
         headers: {
           Authorization: 'Bearer ' + token,
@@ -73,7 +72,6 @@
 </script>
 
 <AutoLogout />
-
 
 <!-- Section pour la publication d'un nouvel article -->
 <div class="publish-container">

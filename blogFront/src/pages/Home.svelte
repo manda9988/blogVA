@@ -5,7 +5,7 @@
   import AutoLogout from '../lib/AutoLogout.svelte';
 
   let articles = [];
-  const API_URL = 'http://localhost:3002';
+  import { API_URL } from '../config/config.js';
 
   onMount(async () => {
     try {

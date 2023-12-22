@@ -7,7 +7,7 @@
 
   let articles = [];
   let username = localStorage.getItem('username');
-  const API_URL = 'http://localhost:3002';
+  import { API_URL } from '../config/config.js';
 
   onMount(async () => {
     if (!username) {

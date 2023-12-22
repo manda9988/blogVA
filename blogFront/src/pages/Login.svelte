@@ -5,7 +5,7 @@
 
   let email = '';
   let password = '';
-  const API_URL = 'http://localhost:3002';
+  import { API_URL } from '../config/config.js';
   const LOGOUT_FLAG = 'autoLoggedOut'; // <-- Ajout de la constante
 
   // Fonction pour vérifier si l'utilisateur est déjà connecté
