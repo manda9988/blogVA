@@ -1,20 +1,14 @@
 <!-- Article.svelte -->
 
 <script lang="ts">
-  // Définition de l'interface pour params
-  interface Params {
-    id?: string; // Le '?' indique que la propriété est optionnelle
-    [key: string]: any; // Pour d'autres propriétés potentielles
-  }
-
-  export let params: Params;
-
-  // Importation des fonctions nécessaires de Svelte
   import { onMount } from 'svelte';
   import AutoLogout from '../lib/AutoLogout.svelte';
+  import { getArticle } from '../services/articleService'; // Importez le service
+  import { formatDate } from '../services/utils'; // Utilisez une fonction utilitaire pour la date
   import { API_URL } from '../config/config.js';
 
-  // Définition de l'interface pour un article
+  export let params: { id?: string; [key: string]: any };
+
   interface Article {
     id: number;
     title: string;
@@ -26,45 +20,26 @@
     modified_date?: string;
   }
 
-  // Initialisation des variables pour l'article et son chargement
-  let id: string;
   let article: Article;
   let isLoading = true;
+  let errorMessage = ''; // Gérer les messages d'erreur
 
-  // Fonction exécutée lors du montage du composant
-  onMount(() => {
-    // MODIFICATION: Utilisez directement la prop params pour obtenir l'ID
+  onMount(async () => {
     if (params && params.id) {
-      id = params.id;
-      loadData().then(() => {
-        isLoading = false;
-      });
+      isLoading = true;
+      try {
+        article = await getArticle(params.id);
+      } catch (error) {
+        errorMessage = error.message || 'Failed to load article';
+        console.error(errorMessage);
+      }
+      isLoading = false;
     } else {
-      console.error('ID not provided');
+      errorMessage = 'Article ID not provided';
+      console.error(errorMessage);
       isLoading = false;
     }
   });
-
-  // Fonction pour charger les données de l'article
-  async function loadData() {
-    const res = await fetch(`${API_URL}/articles/${id}`); // Utilisation de API_URL
-    if (res.ok) {
-      article = await res.json();
-    } else {
-      console.error('Failed to load article');
-      isLoading = false;
-    }
-  }
-
-  // Fonction pour formater la date
-  function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-    });
-  }
 </script>
 
 <AutoLogout />

@@ -1,11 +1,13 @@
 <!-- Edit.svelte -->
 
 <script lang="ts">
-  // Importation des fonctions nécessaires de Svelte
   import { onMount } from 'svelte';
+  import { updateArticle, getArticle } from '../services/articleService'; // Service pour les opérations sur les articles
+  import { confirmAction } from '../services/utils'; // Utilisation d'une fonction utilitaire pour la confirmation
   import { API_URL } from '../config/config.js';
 
-  // Définition de l'interface pour un article
+  export let params: { id?: string; [key: string]: any } = {};
+
   interface Article {
     id: number;
     title: string;
@@ -14,14 +16,6 @@
     imageurl: string;
   }
 
-  // Définition de l'interface pour params
-  interface Params {
-    id?: string; // Le '?' indique que la propriété est optionnelle
-    [key: string]: any; // Pour d'autres propriétés potentielles
-  }
-
-  // Initialisation des variables pour l'article et son chargement
-  let id: string;
   let article: Article = {
     id: 0,
     title: '',
@@ -30,69 +24,39 @@
     imageurl: '',
   };
   let isLoading = true;
-  let file: File | null = null; // Variable pour stocker le fichier image
+  let file: File | null = null;
+  let errorMessage = '';
 
-  export let params: Params = {};
-
-  // Fonction exécutée lors du montage du composant
-  onMount(() => {
-    if (params && params.id) {
-      id = params.id;
-      loadData().then(() => {
-        isLoading = false;
-      });
+  onMount(async () => {
+    if (params.id) {
+      try {
+        article = await getArticle(params.id);
+      } catch (error) {
+        errorMessage = error.message || 'Failed to load article';
+      }
+      isLoading = false;
     } else {
-      console.error('ID not provided');
+      errorMessage = 'Article ID not provided';
       isLoading = false;
     }
   });
 
-  // Fonction pour charger les données de l'article
-  async function loadData() {
+  async function handleEdit() {
+    if (
+      !confirmAction('Êtes-vous sûr de vouloir sauvegarder les modifications?')
+    )
+      return;
+
     try {
-      const res = await fetch(`${API_URL}/articles/${id}`); // Modifié
-      if (!res.ok) throw new Error('Failed to load article');
-      article = await res.json();
+      await updateArticle(article, file); // Utilisez le service pour mettre à jour l'article
+      window.location.href = '/';
     } catch (error) {
-      console.error('Error Loading Data:', error);
-      isLoading = false;
+      errorMessage = error.message || 'Error updating the article';
     }
   }
 
-  // Fonction pour gérer la modification de l'article
-  function handleEdit() {
-    const isConfirmed = confirm(
-      'Êtes-vous sûr de vouloir sauvegarder les modifications?',
-    );
-    if (!isConfirmed) return;
-
-    const formData = new FormData();
-    formData.append('title', article.title);
-    formData.append('content', article.content);
-    formData.append('category', article.category);
-    if (file) formData.append('image', file); // Ajoutez le fichier image seulement s'il est présent
-
-    const token = localStorage.getItem('token'); // Récupérez le token du localStorage
-
-    fetch(`${API_URL}/articles/${id}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`, // Ajoutez le token à l'en-tête de la requête
-      },
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        window.location.href = '/';
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  }
-
-  // Fonction pour gérer le changement de fichier
   function handleFileChange(event) {
-    file = event.target.files[0]; // Stockez le fichier dans la variable
+    file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {

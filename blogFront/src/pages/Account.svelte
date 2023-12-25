@@ -1,118 +1,53 @@
 <!-- Account.svelte -->
 <script>
   import { onMount } from 'svelte';
-  import { push } from 'svelte-spa-router';
   import AutoLogout from '../lib/AutoLogout.svelte';
-  import { API_URL } from '../config/config.js';
+  import { verifyAccess, handleUnsubscribe } from '../services/authService.js';
+  import {
+    loadArticles,
+    deleteArticle,
+    editArticle,
+  } from '../services/articleService.js';
+  import {
+    clearLocalStorage,
+    getLocalStorageItem,
+  } from '../services/storageService.js';
+  import { confirmAction, redirectToLogin } from '../services/utils.js';
 
   let articles = [];
-  const username = localStorage.getItem('username');
-  const token = localStorage.getItem('token');
+  const username = getLocalStorageItem('username');
+  const token = getLocalStorageItem('token');
 
-  onMount(() => {
-    verifyAccess();
-    loadArticles();
+  onMount(async () => {
+    if (await verifyAccess(token, username)) {
+      articles = await loadArticles(
+        token,
+        getLocalStorageItem('role'),
+        getLocalStorageItem('userId'),
+      );
+    }
   });
 
-  async function verifyAccess() {
-    if (!username || !token) {
-      redirectToLogin('Veuillez vous connecter pour accéder à cette page.');
+  async function handleEditArticle(id) {
+    editArticle(id);
+  }
+
+  async function handleDeleteArticle(id, title) {
+    const isDeleted = await deleteArticle(id, title, token);
+    if (isDeleted) {
+      articles = articles.filter((article) => article.id !== id);
     }
+  }
 
-    const response = await fetch(`${API_URL}/users/verifyToken`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!response.ok) {
+  function handleLogout() {
+    if (confirmAction('Êtes-vous sûr de vouloir vous déconnecter?')) {
       clearLocalStorage();
       redirectToLogin();
     }
   }
 
-  async function loadArticles() {
-    const userRole = localStorage.getItem('role');
-    const userId = localStorage.getItem('userId');
-    let articlesEndpoint = `${API_URL}/articles${
-      userRole !== 'admin' ? `?userId=${userId}` : ''
-    }`;
-
-    try {
-      const res = await fetch(articlesEndpoint);
-      articles = await res.json();
-    } catch (error) {
-      console.error('Failed to load articles:', error);
-    }
-  }
-
-  async function editArticle(id) {
-    if (confirm('Êtes-vous sûr de vouloir modifier cet article?')) {
-      push(`/edit/${id}`);
-    }
-  }
-
-  async function deleteArticle(id, title) {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer l'article ${title}?`)) {
-      try {
-        const res = await fetch(`${API_URL}/articles/${id}`, {
-          method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (res.ok) {
-          articles = articles.filter((article) => article.id !== id);
-        } else {
-          alert("Échec de la suppression de l'article.");
-        }
-      } catch (error) {
-        console.error('Failed to delete article:', error);
-      }
-    }
-  }
-
-  function handleLogout() {
-    if (confirm('Êtes-vous sûr de vouloir vous déconnecter?')) {
-      logoutWithoutConfirmation();
-    }
-  }
-
-  function logoutWithoutConfirmation() {
-    clearLocalStorage();
-    push('/');
-  }
-
-  async function handleUnsubscribe() {
-    if (
-      confirm(
-        'Êtes-vous sûr de vouloir vous désinscrire ? Cette action est irréversible.',
-      )
-    ) {
-      try {
-        const res = await fetch(`${API_URL}/users/${username}`, {
-          method: 'DELETE',
-        });
-
-        if (res.ok) {
-          logoutWithoutConfirmation();
-        } else {
-          const data = await res.json();
-          alert(data.error || 'Erreur lors de la désinscription');
-        }
-      } catch (error) {
-        console.error('Failed to unsubscribe:', error);
-      }
-    }
-  }
-
-  function clearLocalStorage() {
-    localStorage.removeItem('username');
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('role');
-  }
-
-  function redirectToLogin(message = '') {
-    if (message) alert(message);
-    push('/login');
+  async function handleUnsubscribeRequest() {
+    await handleUnsubscribe(username, token);
   }
 </script>
 
@@ -141,11 +76,11 @@
             <div class="action-buttons">
               <button
                 class="edit-button"
-                on:click={() => editArticle(article.id)}>Modifier</button
+                on:click={() => handleEditArticle(article.id)}>Modifier</button
               >
               <button
                 class="delete-button"
-                on:click={() => deleteArticle(article.id, article.title)}
+                on:click={() => handleDeleteArticle(article.id, article.title)}
                 >Supprimer</button
               >
             </div>
@@ -157,6 +92,6 @@
 
   <div class="account-buttons">
     <button on:click={handleLogout}>Déconnexion</button>
-    <button on:click={handleUnsubscribe}>Se désinscrire</button>
+    <button on:click={handleUnsubscribeRequest}>Se désinscrire</button>
   </div>
 </div>
