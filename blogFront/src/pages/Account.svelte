@@ -1,117 +1,118 @@
 <!-- Account.svelte -->
 <script>
-  // Importation des fonctions nécessaires de Svelte et svelte-spa-router
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
   import AutoLogout from '../lib/AutoLogout.svelte';
-
-  let articles = [];
-  let username = localStorage.getItem('username');
   import { API_URL } from '../config/config.js';
 
-  onMount(async () => {
-    if (!username) {
-      alert('Veuillez vous connecter pour accéder à cette page.');
-      push('/login');
-      return;
-    }
+  let articles = [];
+  const username = localStorage.getItem('username');
+  const token = localStorage.getItem('token');
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      push('/login');
-      return;
+  onMount(() => {
+    verifyAccess();
+    loadArticles();
+  });
+
+  async function verifyAccess() {
+    if (!username || !token) {
+      redirectToLogin('Veuillez vous connecter pour accéder à cette page.');
     }
 
     const response = await fetch(`${API_URL}/users/verifyToken`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (!response.ok) {
-      localStorage.removeItem('username');
-      localStorage.removeItem('token');
-      push('/login');
-      return;
+      clearLocalStorage();
+      redirectToLogin();
     }
+  }
 
-    const userId = localStorage.getItem('userId');
+  async function loadArticles() {
     const userRole = localStorage.getItem('role');
+    const userId = localStorage.getItem('userId');
+    let articlesEndpoint = `${API_URL}/articles${
+      userRole !== 'admin' ? `?userId=${userId}` : ''
+    }`;
 
-    let articlesEndpoint = `${API_URL}/articles`;
-    if (userRole !== 'admin') {
-      articlesEndpoint += `?userId=${userId}`;
+    try {
+      const res = await fetch(articlesEndpoint);
+      articles = await res.json();
+    } catch (error) {
+      console.error('Failed to load articles:', error);
     }
+  }
 
-    const res = await fetch(articlesEndpoint);
-    articles = await res.json();
-  });
-
-  function editArticle(id) {
-    const confirmEdit = window.confirm(
-      'Êtes-vous sûr de vouloir modifier cet article?',
-    );
-    if (confirmEdit) {
+  async function editArticle(id) {
+    if (confirm('Êtes-vous sûr de vouloir modifier cet article?')) {
       push(`/edit/${id}`);
     }
   }
 
   async function deleteArticle(id, title) {
-    const confirmDelete = window.confirm(
-      `Êtes-vous sûr de vouloir supprimer l'article ${title}?`,
-    );
-    if (confirmDelete) {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${API_URL}/articles/${id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    if (confirm(`Êtes-vous sûr de vouloir supprimer l'article ${title}?`)) {
+      try {
+        const res = await fetch(`${API_URL}/articles/${id}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-      if (res.ok) {
-        articles = articles.filter((article) => article.id !== id);
-      } else {
-        alert("Échec de la suppression de l'article.");
+        if (res.ok) {
+          articles = articles.filter((article) => article.id !== id);
+        } else {
+          alert("Échec de la suppression de l'article.");
+        }
+      } catch (error) {
+        console.error('Failed to delete article:', error);
       }
     }
   }
 
-  // MODIFICATION: Fonction pour se déconnecter
   function handleLogout() {
-    const confirmLogout = window.confirm(
-      'Êtes-vous sûr de vouloir vous déconnecter?',
-    );
-    if (confirmLogout) {
+    if (confirm('Êtes-vous sûr de vouloir vous déconnecter?')) {
       logoutWithoutConfirmation();
     }
   }
 
-  // MODIFICATION: Fonction pour se déconnecter sans confirmation
   function logoutWithoutConfirmation() {
-    localStorage.removeItem('username');
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('role');
+    clearLocalStorage();
     push('/');
   }
 
   async function handleUnsubscribe() {
-    const confirmUnsubscribe = window.confirm(
-      'Êtes-vous sûr de vouloir vous désinscrire ? Cette action est irréversible.',
-    );
-    if (confirmUnsubscribe) {
-      const res = await fetch(`${API_URL}/users/${username}`, {
-        method: 'DELETE',
-      });
+    if (
+      confirm(
+        'Êtes-vous sûr de vouloir vous désinscrire ? Cette action est irréversible.',
+      )
+    ) {
+      try {
+        const res = await fetch(`${API_URL}/users/${username}`, {
+          method: 'DELETE',
+        });
 
-      if (res.ok) {
-        logoutWithoutConfirmation();
-      } else {
-        const data = await res.json();
-        alert(data.error || 'Erreur lors de la désinscription');
+        if (res.ok) {
+          logoutWithoutConfirmation();
+        } else {
+          const data = await res.json();
+          alert(data.error || 'Erreur lors de la désinscription');
+        }
+      } catch (error) {
+        console.error('Failed to unsubscribe:', error);
       }
     }
+  }
+
+  function clearLocalStorage() {
+    localStorage.removeItem('username');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('role');
+  }
+
+  function redirectToLogin(message = '') {
+    if (message) alert(message);
+    push('/login');
   }
 </script>
 
