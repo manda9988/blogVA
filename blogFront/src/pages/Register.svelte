@@ -3,6 +3,8 @@
 <script>
   // Importation des fonctions nécessaires de Svelte et svelte-spa-router
   import { push } from 'svelte-spa-router';
+  import { API_URL } from '../config/config.js';
+  import { handleRegister } from '../services/authService.js';
 
   // Initialisation des variables pour le nom d'utilisateur, l'email, le mot de passe et la confirmation du mot de passe
   let email = '';
@@ -10,37 +12,16 @@
   let password = '';
   let confirmPassword = '';
 
-  import { API_URL } from '../config/config.js';
-
   // Fonction pour gérer l'inscription
-  async function handleRegister() {
-    // Vérification de la correspondance des mots de passe
+  async function register() {
     if (password !== confirmPassword) {
       alert('Les mots de passe ne correspondent pas');
       return;
     }
 
-    try {
-      // Envoi des informations d'inscription au backend
-      const response = await fetch(`${API_URL}/users/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        alert(error.errors.map((err) => err.msg).join('\n'));
-        return;
-      }
-
-      alert('Inscription réussie!');
+    const success = await handleRegister(username, email, password);
+    if (success) {
       push('/login'); // Redirection vers la page de connexion
-    } catch (error) {
-      console.error("Erreur lors de l'inscription:", error);
-      alert("Erreur lors de l'inscription. Veuillez réessayer.");
     }
   }
 </script>
@@ -49,7 +30,7 @@
 <div class="register-container">
   <h2>S'inscrire</h2>
   <!-- Formulaire d'inscription -->
-  <form on:submit|preventDefault={handleRegister}>
+  <form on:submit|preventDefault={register}>
     <!-- Champ pour le nom d'utilisateur -->
     <div class="input-group">
       <label for="username">Nom d'utilisateur</label>
@@ -86,5 +67,3 @@
     <button type="submit">S'inscrire</button>
   </form>
 </div>
-
-<!-- Ce fichier est le composant de la page d'inscription. Il contient un formulaire permettant à l'utilisateur de saisir son nom d'utilisateur, son adresse e-mail, son mot de passe et de confirmer son mot de passe pour s'inscrire. Une fois le formulaire soumis, les informations sont envoyées au backend pour enregistrement. -->

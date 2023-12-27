@@ -6,7 +6,7 @@ import {
   getLocalStorageItem,
 } from './storageService.js';
 import { redirectToLogin } from './utils.js';
-import { push } from 'svelte-spa-router'; // Assurez-vous que le chemin d'importation est correct
+import { push } from 'svelte-spa-router';
 
 export async function verifyAccess(token, username) {
   if (!username || !token) {
@@ -118,4 +118,29 @@ export async function verifyPublishAccess(userId, role) {
     return false;
   }
   return true;
+}
+
+export async function handleRegister(username, email, password) {
+  try {
+    const response = await fetch(`${API_URL}/users/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, email, password }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      alert(error.errors.map((err) => err.msg).join('\n'));
+      return false;
+    }
+
+    alert('Inscription réussie!');
+    return true;
+  } catch (error) {
+    console.error("Erreur lors de l'inscription:", error);
+    alert("Erreur lors de l'inscription. Veuillez réessayer.");
+    return false;
+  }
 }
