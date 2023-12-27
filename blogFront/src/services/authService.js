@@ -1,7 +1,12 @@
 // authService.js
 import { API_URL } from '../config/config.js';
-import { clearLocalStorage, setLocalStorageItem } from './storageService.js';
+import {
+  clearLocalStorage,
+  setLocalStorageItem,
+  getLocalStorageItem,
+} from './storageService.js';
 import { redirectToLogin } from './utils.js';
+import { push } from 'svelte-spa-router'; // Assurez-vous que le chemin d'importation est correct
 
 export async function verifyAccess(token, username) {
   if (!username || !token) {
@@ -91,4 +96,26 @@ export async function handleLogin(email, password) {
     alert('Erreur lors de la connexion. Veuillez réessayer.');
     return false;
   }
+}
+
+export async function verifyPublishAccess(userId, role) {
+  const token = getLocalStorageItem('token'); // Utiliser storageService.js
+  if (!userId || !token) {
+    redirectToLogin('Veuillez vous connecter pour accéder à cette page.');
+    return false;
+  }
+
+  // Vérifier le nombre d'articles pour les administrateurs ou utilisateurs
+  const response = await fetch(`${API_URL}/articles/countByUser/${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await response.json();
+  const articleLimit = role === 'admin' ? 2 : 1;
+
+  if (!response.ok || data.count >= articleLimit) {
+    alert(`Vous êtes limité à ${articleLimit} articles.`);
+    push('/');
+    return false;
+  }
+  return true;
 }

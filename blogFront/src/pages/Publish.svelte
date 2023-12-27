@@ -4,6 +4,8 @@
   import { push } from 'svelte-spa-router';
   import AutoLogout from '../lib/AutoLogout.svelte';
   import { API_URL } from '../config/config.js';
+  import { verifyPublishAccess } from '../services/authService.js';
+  import { publishArticle } from '../services/articleService.js';
 
   let title = '';
   let content = '';
@@ -11,24 +13,11 @@
   let file;
 
   onMount(async () => {
-    if (!localStorage.getItem('username')) {
-      alert('Veuillez vous connecter pour accéder à cette page.');
-      push('/login');
-    } else {
-      const userId = localStorage.getItem('userId');
-      const role = localStorage.getItem('role');
-
-      // Modification: Ajout de la logique pour vérifier le nombre d'articles pour les administrateurs
-      const response = await fetch(`${API_URL}/articles/countByUser/${userId}`);
-      const data = await response.json();
-
-      // Modification: Fixe la limite à 1 pour les utilisateurs réguliers et à 2 pour les administrateurs
-      const articleLimit = role === 'admin' ? 2 : 1;
-
-      if (data.count >= articleLimit) {
-        alert(`Vous êtes limité à ${articleLimit} articles.`);
-        push('/'); // Redirige vers la page d'accueil si la limite est atteinte
-      }
+    const userId = localStorage.getItem('userId');
+    const role = localStorage.getItem('role');
+    // Utiliser verifyPublishAccess pour vérifier les permissions et les limites
+    if (!(await verifyPublishAccess(userId, role))) {
+      return; // Redirection déjà gérée dans verifyPublishAccess
     }
   });
 
@@ -42,28 +31,8 @@
       return;
     }
 
-    const isConfirmed = window.confirm(
-      'Êtes-vous sûr de vouloir publier cet article ?',
-    );
-    if (isConfirmed) {
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('content', content);
-      formData.append('category', category);
-      formData.append('image', file);
-
-      fetch(`${API_URL}/articles`, {
-        method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          window.location.href = '/';
-        });
-    }
+    // Appel à la nouvelle fonction dans articleService.js
+    publishArticle(title, content, category, file, token);
   }
 
   function handleFileChange(event) {
@@ -124,5 +93,3 @@
     <button type="submit">Publier</button>
   </form>
 </div>
-
-<!-- Ce fichier est le composant de la page de publication d'un nouvel article. Il contient un formulaire permettant à l'utilisateur de saisir le titre, le contenu, la catégorie et l'image de l'article. Une fois le formulaire soumis, l'article est envoyé au backend pour être enregistré. -->

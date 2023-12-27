@@ -80,3 +80,40 @@ export async function updateArticle(article, file) {
   }
   return response.json();
 }
+
+export async function publishArticle(title, content, category, file, token) {
+  const isConfirmed = window.confirm(
+    'Êtes-vous sûr de vouloir publier cet article ?',
+  );
+  if (!isConfirmed) return;
+
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('content', content);
+  formData.append('category', category);
+  formData.append('image', file);
+
+  try {
+    const response = await fetch(`${API_URL}/articles`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+      body: formData,
+    });
+    const data = await response.json();
+    if (response.ok) {
+      // Redirige l'utilisateur après la publication réussie
+      window.location.href = '/';
+      return data; // Retourne les données pour une utilisation ultérieure si nécessaire
+    } else {
+      // Gère les erreurs de réponse
+      alert(
+        data.message || "Une erreur s'est produite lors de la publication.",
+      );
+    }
+  } catch (error) {
+    console.error('Failed to publish the article:', error);
+    alert("Une erreur s'est produite lors de la publication.");
+  }
+}
