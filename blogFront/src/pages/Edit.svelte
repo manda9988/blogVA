@@ -73,6 +73,9 @@
   <div>Loading...</div>
 {:else}
   <div class="edit-container">
+    {#if errorMessage}
+      <div class="error-message">{errorMessage}</div>
+    {/if}
     <h2>Modifier l'article: {article.title}</h2>
 
     <form on:submit|preventDefault={handleEdit}>
