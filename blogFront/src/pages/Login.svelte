@@ -2,11 +2,11 @@
 <script>
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
+  import { verifyTokenOnMount, handleLogin } from '../services/authService.js';
+  import { API_URL } from '../config/config.js';
 
   let email = '';
   let password = '';
-  import { API_URL } from '../config/config.js';
-  const LOGOUT_FLAG = 'autoLoggedOut'; // <-- Ajout de la constante
 
   // Fonction pour vérifier si l'utilisateur est déjà connecté
   function checkIfAlreadyLoggedIn() {
@@ -20,49 +20,19 @@
   onMount(async () => {
     checkIfAlreadyLoggedIn();
 
-    // Vérification de la validité du token
+    // Utiliser la fonction déplacée
     const token = localStorage.getItem('token');
-    if (token) {
-      const response = await fetch(`${API_URL}/users/verifyToken`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) {
-        localStorage.removeItem('username');
-        localStorage.removeItem('token');
-        push('/login');
-      }
+    if (token && !(await verifyTokenOnMount(token))) {
+      push('/login');
     }
   });
 
   // Fonction pour gérer la connexion
-  async function handleLogin() {
-    try {
-      const response = await fetch(`${API_URL}/users/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.error || 'Erreur de connexion');
-        return;
-      }
-
-      localStorage.setItem('username', data.user.username);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('userId', data.user.id);
-      localStorage.setItem('role', data.user.role);
-      localStorage.removeItem(LOGOUT_FLAG); // <-- Ajout de cette ligne pour réinitialiser l'indicateur
+  async function login() {
+    const success = await handleLogin(email, password);
+    if (success) {
       push('/account');
-    } catch (error) {
-      console.error('Erreur lors de la connexion:', error);
-      alert('Erreur lors de la connexion. Veuillez réessayer.');
     }
   }
 
@@ -94,7 +64,7 @@
 <div class="login-container">
   <h2>Se connecter</h2>
   <!-- Formulaire de connexion -->
-  <form on:submit|preventDefault={handleLogin}>
+  <form on:submit|preventDefault={login}>
     <!-- Champ pour l'adresse e-mail -->
     <div class="input-group">
       <label for="email">Adresse e-mail</label>
