@@ -2,42 +2,8 @@
 
 import { API_URL } from '../config/config.js';
 import { push } from 'svelte-spa-router';
-import { confirmAction, notify } from './utils';
-
-// Fonction utilitaire pour exécuter les requêtes fetch
-async function fetchWithAuth(url, options = {}) {
-  const token = localStorage.getItem('token');
-
-  // Assurez-vous que options.headers existe, en le définissant comme un objet vide par défaut
-  options.headers = options.headers || {};
-
-  // Ajoutez l'en-tête d'autorisation aux en-têtes existants
-  const headers = {
-    ...options.headers,
-    Authorization: `Bearer ${token}`,
-  };
-
-  // Tentez le fetch avec les options fournies et les en-têtes supplémentaires
-  const response = await fetch(url, { ...options, headers });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || 'Échec de la requête');
-  }
-  return response.json();
-}
-
-// Fonction pour gérer les confirmations et les notifications
-function handleActionConfirmation(message, action) {
-  if (confirmAction(message)) {
-    try {
-      action();
-    } catch (error) {
-      console.error('Action failed:', error);
-      notify(error.message);
-    }
-  }
-}
+import { notify } from './utils'; // Ajoutez cette ligne pour importer notify
+import { fetchWithAuth, handleActionConfirmation } from './apiHelper'; // Importez ici
 
 // Fonctions API réutilisables
 export async function loadArticles(userRole, userId) {
