@@ -51,7 +51,6 @@ export async function handleUnsubscribe(username, token) {
   }
 }
 
-// Ajout de la nouvelle fonction
 export async function verifyTokenOnMount(token) {
   if (!token) return false;
 

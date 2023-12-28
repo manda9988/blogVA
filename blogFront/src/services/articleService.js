@@ -1,119 +1,106 @@
 // articleService.js
+
 import { API_URL } from '../config/config.js';
 import { push } from 'svelte-spa-router';
-import { confirmAction, notify } from './utils'; // Importez des fonctions utilitaires pour les interactions utilisateur
+import { confirmAction, notify } from './utils';
 
-export async function loadArticles(token, userRole, userId) {
-  const articlesEndpoint = `${API_URL}/articles${
-    userRole !== 'admin' ? `?userId=${userId}` : ''
-  }`;
-  try {
-    const res = await fetch(articlesEndpoint, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) throw new Error('Failed to load articles');
-    return await res.json();
-  } catch (error) {
-    console.error('Failed to load articles:', error);
-    throw error; // Renvoyez l'erreur pour une gestion plus personnalisée
+// Fonction utilitaire pour exécuter les requêtes fetch
+async function fetchWithAuth(url, options = {}) {
+  const token = localStorage.getItem('token');
+
+  // Assurez-vous que options.headers existe, en le définissant comme un objet vide par défaut
+  options.headers = options.headers || {};
+
+  // Ajoutez l'en-tête d'autorisation aux en-têtes existants
+  const headers = {
+    ...options.headers,
+    Authorization: `Bearer ${token}`,
+  };
+
+  // Tentez le fetch avec les options fournies et les en-têtes supplémentaires
+  const response = await fetch(url, { ...options, headers });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || 'Échec de la requête');
+  }
+  return response.json();
+}
+
+// Fonction pour gérer les confirmations et les notifications
+function handleActionConfirmation(message, action) {
+  if (confirmAction(message)) {
+    try {
+      action();
+    } catch (error) {
+      console.error('Action failed:', error);
+      notify(error.message);
+    }
   }
 }
 
-export async function deleteArticle(id, title, token) {
-  if (
-    confirmAction(`Êtes-vous sûr de vouloir supprimer l'article "${title}"?`)
-  ) {
-    try {
-      const res = await fetch(`${API_URL}/articles/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+// Fonctions API réutilisables
+export async function loadArticles(userRole, userId) {
+  return fetchWithAuth(
+    `${API_URL}/articles${userRole !== 'admin' ? `?userId=${userId}` : ''}`,
+  );
+}
 
-      if (!res.ok) throw new Error("Échec de la suppression de l'article");
-      notify(`L'article "${title}" a été supprimé.`); // Utilisez une méthode personnalisée pour les notifications
-      return true;
-    } catch (error) {
-      console.error('Failed to delete article:', error);
-      notify(error.message); // Notifiez l'utilisateur en cas d'erreur
-      return false;
-    }
-  }
-  return false;
+export async function deleteArticle(id, title) {
+  let isDeleted = false; // Ajouté: variable pour suivre l'état de suppression
+  handleActionConfirmation(
+    `Êtes-vous sûr de vouloir supprimer l'article "${title}"?`,
+    async () => {
+      await fetchWithAuth(`${API_URL}/articles/${id}`, { method: 'DELETE' });
+      notify(`L'article "${title}" a été supprimé.`);
+      isDeleted = true; // Modifié: Mettre à jour si l'article est supprimé
+    },
+  );
+  return isDeleted; // Ajouté: retourner l'état de suppression
 }
 
 export function editArticle(id) {
-  if (confirmAction('Êtes-vous sûr de vouloir modifier cet article?')) {
-    push(`/edit/${id}`);
-  }
+  handleActionConfirmation(
+    'Êtes-vous sûr de vouloir modifier cet article?',
+    () => {
+      push(`/edit/${id}`);
+    },
+  );
 }
 
 export async function getArticle(id) {
-  try {
-    const res = await fetch(`${API_URL}/articles/${id}`);
-    if (!res.ok) throw new Error('Failed to load article');
-    return await res.json();
-  } catch (error) {
-    console.error('Failed to load article:', error);
-    throw error; // Renvoyez l'erreur pour une gestion plus personnalisée
-  }
+  return fetchWithAuth(`${API_URL}/articles/${id}`);
 }
 
 export async function updateArticle(article, file) {
-  // Assurez-vous que cette fonction existe et est exportée
   const formData = new FormData();
   formData.append('title', article.title);
   formData.append('content', article.content);
   formData.append('category', article.category);
   if (file) formData.append('image', file);
 
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_URL}/articles/${article.id}`, {
+  return fetchWithAuth(`${API_URL}/articles/${article.id}`, {
     method: 'PUT',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
     body: formData,
   });
-
-  if (!response.ok) {
-    throw new Error('Failed to update article');
-  }
-  return response.json();
 }
 
-export async function publishArticle(title, content, category, file, token) {
-  const isConfirmed = window.confirm(
+export async function publishArticle(title, content, category, file) {
+  handleActionConfirmation(
     'Êtes-vous sûr de vouloir publier cet article ?',
-  );
-  if (!isConfirmed) return;
+    async () => {
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      formData.append('category', category);
+      if (file) formData.append('image', file);
 
-  const formData = new FormData();
-  formData.append('title', title);
-  formData.append('content', content);
-  formData.append('category', category);
-  formData.append('image', file);
-
-  try {
-    const response = await fetch(`${API_URL}/articles`, {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + token,
-      },
-      body: formData,
-    });
-    const data = await response.json();
-    if (response.ok) {
-      // Redirige l'utilisateur après la publication réussie
+      const data = await fetchWithAuth(`${API_URL}/articles`, {
+        method: 'POST',
+        body: formData,
+      });
       window.location.href = '/';
-      return data; // Retourne les données pour une utilisation ultérieure si nécessaire
-    } else {
-      // Gère les erreurs de réponse
-      alert(
-        data.message || "Une erreur s'est produite lors de la publication.",
-      );
-    }
-  } catch (error) {
-    console.error('Failed to publish the article:', error);
-    alert("Une erreur s'est produite lors de la publication.");
-  }
+      return data;
+    },
+  );
 }

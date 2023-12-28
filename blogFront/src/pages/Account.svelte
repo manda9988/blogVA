@@ -21,7 +21,6 @@
   onMount(async () => {
     if (await verifyAccess(token, username)) {
       articles = await loadArticles(
-        token,
         getLocalStorageItem('role'),
         getLocalStorageItem('userId'),
       );
@@ -33,8 +32,9 @@
   }
 
   async function handleDeleteArticle(id, title) {
-    const isDeleted = await deleteArticle(id, title, token);
+    const isDeleted = await deleteArticle(id, title); // Enlever le token de l'appel
     if (isDeleted) {
+      // Ajouté: Vérifier si l'article a été supprimé
       articles = articles.filter((article) => article.id !== id);
     }
   }

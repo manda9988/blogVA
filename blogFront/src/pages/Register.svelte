@@ -3,7 +3,6 @@
 <script>
   // Importation des fonctions nécessaires de Svelte et svelte-spa-router
   import { push } from 'svelte-spa-router';
-  import { API_URL } from '../config/config.js';
   import { handleRegister } from '../services/authService.js';
 
   // Initialisation des variables pour le nom d'utilisateur, l'email, le mot de passe et la confirmation du mot de passe
