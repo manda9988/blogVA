@@ -6,21 +6,51 @@ import {
   getLocalStorageItem,
 } from './storageService.js';
 import { redirectToLogin } from './utils.js';
-import { push } from 'svelte-spa-router';
 
-export async function verifyAccess(token, username) {
+// Modification 1: Fonction utilitaire pour les requêtes fetch avec authentification
+async function fetchWithAuth(url, options = {}) {
+  const token = getLocalStorageItem('token');
+  const headers = {
+    ...options.headers,
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
+
+  const response = await fetch(url, { ...options, headers });
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || 'Erreur de serveur');
+  }
+  return response.json();
+}
+
+// Modification 2: Gestion centralisée des erreurs et des redirections
+function handleError(error) {
+  console.error(error);
+  alert(error.message || 'Une erreur est survenue. Veuillez réessayer.');
+}
+
+function handleLogoutAndRedirect(message) {
+  clearLocalStorage();
+  redirectToLogin(message);
+}
+
+// Fonctions API réutilisables (modifiées pour utiliser fetchWithAuth et les nouvelles fonctions de gestion)
+export async function verifyAccess() {
+  const username = getLocalStorageItem('username');
+  const token = getLocalStorageItem('token');
+
   if (!username || !token) {
-    redirectToLogin('Veuillez vous connecter pour accéder à cette page.');
+    handleLogoutAndRedirect(
+      'Veuillez vous connecter pour accéder à cette page.',
+    );
     return false;
   }
 
-  const response = await fetch(`${API_URL}/users/verifyToken`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!response.ok) {
-    clearLocalStorage();
-    redirectToLogin();
+  try {
+    await fetchWithAuth(`${API_URL}/users/verifyToken`);
+  } catch (error) {
+    handleLogoutAndRedirect();
     return false;
   }
   return true;
@@ -33,20 +63,12 @@ export async function handleUnsubscribe(username, token) {
     )
   ) {
     try {
-      const res = await fetch(`${API_URL}/users/${username}`, {
+      await fetchWithAuth(`${API_URL}/users/${username}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
       });
-
-      if (res.ok) {
-        clearLocalStorage();
-        redirectToLogin('Votre compte a été désinscrit avec succès.');
-      } else {
-        const data = await res.json();
-        alert(data.error || 'Erreur lors de la désinscription');
-      }
+      handleLogoutAndRedirect('Votre compte a été désinscrit avec succès.');
     } catch (error) {
-      console.error('Failed to unsubscribe:', error);
+      handleError(error);
     }
   }
 }
@@ -54,13 +76,10 @@ export async function handleUnsubscribe(username, token) {
 export async function verifyTokenOnMount(token) {
   if (!token) return false;
 
-  const response = await fetch(`${API_URL}/users/verifyToken`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!response.ok) {
-    clearLocalStorage();
-    redirectToLogin();
+  try {
+    await fetchWithAuth(`${API_URL}/users/verifyToken`);
+  } catch (error) {
+    handleLogoutAndRedirect();
     return false;
   }
   return true;
@@ -68,22 +87,12 @@ export async function verifyTokenOnMount(token) {
 
 export async function handleLogin(email, password) {
   try {
-    const response = await fetch(`${API_URL}/users/login`, {
+    const data = await fetchWithAuth(`${API_URL}/users/login`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({ email, password }),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      alert(data.error || 'Erreur de connexion');
-      return null;
-    }
-
-    // Utiliser setLocalStorageItem pour définir les valeurs
+    // Définir les éléments dans le localStorage
     setLocalStorageItem('username', data.user.username);
     setLocalStorageItem('token', data.token);
     setLocalStorageItem('userId', data.user.id);
@@ -91,55 +100,41 @@ export async function handleLogin(email, password) {
 
     return true; // Connexion réussie
   } catch (error) {
-    console.error('Erreur lors de la connexion:', error);
-    alert('Erreur lors de la connexion. Veuillez réessayer.');
+    handleError(error);
     return false;
   }
 }
 
 export async function verifyPublishAccess(userId, role) {
-  const token = getLocalStorageItem('token'); // Utiliser storageService.js
-  if (!userId || !token) {
-    redirectToLogin('Veuillez vous connecter pour accéder à cette page.');
+  try {
+    const data = await fetchWithAuth(
+      `${API_URL}/articles/countByUser/${userId}`,
+    );
+    const articleLimit = role === 'admin' ? 4 : 1;
+
+    if (data.count >= articleLimit) {
+      alert(`Vous êtes limité à ${articleLimit} articles.`);
+      redirectToLogin();
+      return false;
+    }
+    return true;
+  } catch (error) {
+    handleError(error);
     return false;
   }
-
-  // Vérifier le nombre d'articles pour les administrateurs ou utilisateurs
-  const response = await fetch(`${API_URL}/articles/countByUser/${userId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const data = await response.json();
-  const articleLimit = role === 'admin' ? 2 : 1;
-
-  if (!response.ok || data.count >= articleLimit) {
-    alert(`Vous êtes limité à ${articleLimit} articles.`);
-    push('/');
-    return false;
-  }
-  return true;
 }
 
 export async function handleRegister(username, email, password) {
   try {
-    const response = await fetch(`${API_URL}/users/register`, {
+    const response = await fetchWithAuth(`${API_URL}/users/register`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({ username, email, password }),
     });
-
-    if (!response.ok) {
-      const error = await response.json();
-      alert(error.errors.map((err) => err.msg).join('\n'));
-      return false;
-    }
 
     alert('Inscription réussie!');
     return true;
   } catch (error) {
-    console.error("Erreur lors de l'inscription:", error);
-    alert("Erreur lors de l'inscription. Veuillez réessayer.");
+    handleError(error);
     return false;
   }
 }

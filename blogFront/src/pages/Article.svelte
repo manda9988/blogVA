@@ -2,7 +2,6 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import AutoLogout from '../lib/AutoLogout.svelte';
   import { getArticle } from '../services/articleService'; // Importez le service
   import { formatDate } from '../services/utils'; // Utilisez une fonction utilitaire pour la date
   import { API_URL } from '../config/config.js';
@@ -41,8 +40,6 @@
     }
   });
 </script>
-
-<AutoLogout />
 
 <div class="article-container">
   <div class="article-details">

@@ -2,8 +2,6 @@
 <script>
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
-  import AutoLogout from '../lib/AutoLogout.svelte';
-  import { API_URL } from '../config/config.js';
   import { verifyPublishAccess } from '../services/authService.js';
   import { publishArticle } from '../services/articleService.js';
 
@@ -32,15 +30,13 @@
     }
 
     // Appel à la nouvelle fonction dans articleService.js
-    publishArticle(title, content, category, file, token);
+    publishArticle(title, content, category, file);
   }
 
   function handleFileChange(event) {
     file = event.target.files[0];
   }
 </script>
-
-<AutoLogout />
 
 <!-- Section pour la publication d'un nouvel article -->
 <div class="publish-container">

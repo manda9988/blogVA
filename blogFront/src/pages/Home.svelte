@@ -2,7 +2,6 @@
 <script>
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
-  import AutoLogout from '../lib/AutoLogout.svelte';
 
   let articles = [];
   import { API_URL } from '../config/config.js';
@@ -26,8 +25,6 @@
     }
   }
 </script>
-
-<AutoLogout />
 
 <!-- Section contenant la liste des articles -->
 <section>

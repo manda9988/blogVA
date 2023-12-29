@@ -1,7 +1,6 @@
 <!-- Account.svelte -->
 <script>
   import { onMount } from 'svelte';
-  import AutoLogout from '../lib/AutoLogout.svelte';
   import { verifyAccess, handleUnsubscribe } from '../services/authService.js';
   import {
     loadArticles,
@@ -19,7 +18,7 @@
   const token = getLocalStorageItem('token');
 
   onMount(async () => {
-    if (await verifyAccess(token, username)) {
+    if (await verifyAccess()) {
       articles = await loadArticles(
         getLocalStorageItem('role'),
         getLocalStorageItem('userId'),
@@ -50,8 +49,6 @@
     await handleUnsubscribe(username, token);
   }
 </script>
-
-<AutoLogout />
 
 <!-- Section du compte utilisateur -->
 <div class="account-container">
