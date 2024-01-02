@@ -35,25 +35,48 @@ function handleLogoutAndRedirect(message) {
   redirectToLogin(message);
 }
 
-// Fonctions API réutilisables (modifiées pour utiliser fetchWithAuth et les nouvelles fonctions de gestion)
+export async function verifyPublishAccess(userId, role) {
+  // Rediriger vers la page d'accueil si l'utilisateur n'est pas connecté
+  if (!userId || isNaN(parseInt(userId))) {
+    redirectToLogin('Vous devez être connecté pour accéder à cette page.');
+    return false;
+  }
+
+  try {
+    const data = await fetchWithAuth(
+      `${API_URL}/articles/countByUser/${userId}`,
+    );
+    const articleLimit = role === 'admin' ? 4 : 1;
+
+    if (data.count >= articleLimit) {
+      alert(`Vous êtes limité à ${articleLimit} articles.`);
+      redirectToLogin();
+      return false;
+    }
+    return true; // L'utilisateur est autorisé à publier
+  } catch (error) {
+    handleError(error);
+    return false;
+  }
+}
+
 export async function verifyAccess() {
-  const username = getLocalStorageItem('username');
+  const userId = getLocalStorageItem('userId');
   const token = getLocalStorageItem('token');
 
-  if (!username || !token) {
-    handleLogoutAndRedirect(
-      'Veuillez vous connecter pour accéder à cette page.',
-    );
+  // Rediriger vers la page d'accueil si l'utilisateur n'est pas connecté
+  if (!userId || !token) {
+    redirectToLogin('Vous devez être connecté pour accéder à cette page.');
     return false;
   }
 
   try {
     await fetchWithAuth(`${API_URL}/users/verifyToken`);
+    return true; // L'utilisateur est connecté
   } catch (error) {
     handleLogoutAndRedirect();
     return false;
   }
-  return true;
 }
 
 export async function handleUnsubscribe(username, token) {
@@ -99,25 +122,6 @@ export async function handleLogin(email, password) {
     setLocalStorageItem('role', data.user.role);
 
     return true; // Connexion réussie
-  } catch (error) {
-    handleError(error);
-    return false;
-  }
-}
-
-export async function verifyPublishAccess(userId, role) {
-  try {
-    const data = await fetchWithAuth(
-      `${API_URL}/articles/countByUser/${userId}`,
-    );
-    const articleLimit = role === 'admin' ? 4 : 1;
-
-    if (data.count >= articleLimit) {
-      alert(`Vous êtes limité à ${articleLimit} articles.`);
-      redirectToLogin();
-      return false;
-    }
-    return true;
   } catch (error) {
     handleError(error);
     return false;

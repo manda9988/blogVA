@@ -14,6 +14,8 @@
     const userId = localStorage.getItem('userId');
     const role = localStorage.getItem('role');
     // Utiliser verifyPublishAccess pour vérifier les permissions et les limites
+    // Ajout pour le débogage :
+    console.log(`UserID: ${userId}, Role: ${role}`);
     if (!(await verifyPublishAccess(userId, role))) {
       return; // Redirection déjà gérée dans verifyPublishAccess
     }
