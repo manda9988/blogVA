@@ -2,27 +2,29 @@
 
 import { API_URL } from '../config/config.js';
 import { push } from 'svelte-spa-router';
-import { notify } from './utils'; // Ajoutez cette ligne pour importer notify
+import { notify, confirmAction } from './utils'; // Ajoutez cette ligne pour importer notify
 import { fetchWithAuth, handleActionConfirmation } from './apiHelper'; // Importez ici
 
-// Fonctions API réutilisables
-export async function loadArticles(userRole, userId) {
-  return fetchWithAuth(
-    `${API_URL}/articles${userRole !== 'admin' ? `?userId=${userId}` : ''}`,
-  );
+// Fonction pour demander une confirmation avant d'exécuter une action
+async function confirmAndExecute(message, action) {
+  if (confirmAction(message)) {
+    try {
+      return await action();
+    } catch (error) {
+      console.error('Action failed:', error);
+      notify(error.message);
+    }
+  }
 }
 
 export async function deleteArticle(id, title) {
-  let isDeleted = false; // Ajouté: variable pour suivre l'état de suppression
-  handleActionConfirmation(
+  return confirmAndExecute(
     `Êtes-vous sûr de vouloir supprimer l'article "${title}"?`,
     async () => {
       await fetchWithAuth(`${API_URL}/articles/${id}`, { method: 'DELETE' });
       notify(`L'article "${title}" a été supprimé.`);
-      isDeleted = true; // Modifié: Mettre à jour si l'article est supprimé
     },
   );
-  return isDeleted; // Ajouté: retourner l'état de suppression
 }
 
 export function editArticle(id) {
@@ -31,6 +33,13 @@ export function editArticle(id) {
     () => {
       push(`/edit/${id}`);
     },
+  );
+}
+
+// Fonctions API réutilisables
+export async function loadArticles(userRole, userId) {
+  return fetchWithAuth(
+    `${API_URL}/articles${userRole !== 'admin' ? `?userId=${userId}` : ''}`,
   );
 }
 
