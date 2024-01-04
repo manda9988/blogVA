@@ -1,16 +1,7 @@
 // apiHelper.js
 
-import { confirmAction, notify } from './utils';
-
-// Nouvelle fonction pour traiter la réponse
-async function handleResponse(response) {
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || 'Échec de la requête');
-  }
-  const text = await response.text();
-  return text ? JSON.parse(text) : {};
-}
+import { confirmAction, notify, handleResponse } from './utils';
+import { getLocalStorageItem } from './storageService.js';
 
 export async function fetchWithAuth(url, options = {}) {
   const token = localStorage.getItem('token');
@@ -28,4 +19,20 @@ export function handleActionConfirmation(message, action) {
       notify(error.message);
     }
   }
+}
+
+export async function fetchWithAuthToken(url, options = {}) {
+  const token = getLocalStorageItem('token');
+  const headers = {
+    ...options.headers,
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
+
+  const response = await fetch(url, { ...options, headers });
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || 'Erreur de serveur');
+  }
+  return response.json();
 }

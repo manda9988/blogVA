@@ -2,20 +2,8 @@
 
 import { API_URL } from '../config/config.js';
 import { push } from 'svelte-spa-router';
-import { notify, confirmAction } from './utils'; // Ajoutez cette ligne pour importer notify
-import { fetchWithAuth, handleActionConfirmation } from './apiHelper'; // Importez ici
-
-// Fonction pour demander une confirmation avant d'exécuter une action
-async function confirmAndExecute(message, action) {
-  if (confirmAction(message)) {
-    try {
-      return await action();
-    } catch (error) {
-      console.error('Action failed:', error);
-      notify(error.message);
-    }
-  }
-}
+import { notify, confirmAndExecute } from './utils';
+import { fetchWithAuth, handleActionConfirmation } from './apiHelper';
 
 export async function deleteArticle(id, title) {
   return confirmAndExecute(
@@ -36,7 +24,6 @@ export function editArticle(id) {
   );
 }
 
-// Fonctions API réutilisables
 export async function loadArticles(userRole, userId) {
   return fetchWithAuth(
     `${API_URL}/articles${userRole !== 'admin' ? `?userId=${userId}` : ''}`,
